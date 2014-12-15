@@ -77,7 +77,7 @@ nhb_setup(){
   export kernelbuild="source $maindir/scripts/kernelbuild.sh"
 
   ### Checks for existing build directory exists
-  if [ -d "$toolchains" ]&&[ -d "$rootfsdir" ]; then
+  if [ -d "$maindir" ]; then
     echo "Previous install found"
     cd $maindir
   else
