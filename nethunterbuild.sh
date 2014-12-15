@@ -168,6 +168,10 @@ nhb_output(){
   rm -rf $workingdir
 }
 
+
+### Set window size
+printf '\033[8;40;90t'
+
 ### Defaults for script
 outputdir=~/NetHunter-Builds
 

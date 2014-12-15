@@ -14,18 +14,18 @@ nhb_setup(){
 }
 
 nhb_stage1(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  FIRST STAGE CHROOT  \e[31m#################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  echo "##########################################################################################"
+  echo "###  FIRST STAGE CHROOT  #################################################################"
+  echo "##########################################################################################"
 
-  debootstrap --foreign --arch $architecture kali kali-$architecture http://http.kali.org/kali
+  debootstrap --foreign --arch $architecture kali $kalirootfs http://http.kali.org/kali
   cp /usr/bin/qemu-arm-static $kalirootfs/usr/bin/
 }
 
 nhb_stage2(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  SECOND STAGE CHROOT  \e[31m################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  echo "##########################################################################################"
+  echo "###  SECOND STAGE CHROOT  ################################################################"
+  echo "##########################################################################################"
 
 
   LANG=C chroot $kalirootfs /debootstrap/debootstrap --second-stage
@@ -45,15 +45,15 @@ nhb_stage2(){
   cp -rf $maindir/files/config/interfaces $kalirootfs/etc/network/interfaces
 
   #### Install Local files
-  cp -rf $maindir/files/bin/{s,start-*} kali-$architecture/usr/bin/
-  cp -rf $maindir/files/bin/hid/* kali-$architecture/usr/bin/
-  cp -rf $maindir/files/bin/msf/*.sh kali-$architecture/usr/bin/
+  cp -rf $maindir/files/bin/{s,start-*} $kalirootfs/usr/bin/
+  cp -rf $maindir/files/bin/hid/* $kalirootfs/usr/bin/
+  cp -rf $maindir/files/bin/msf/*.sh $kalirootfs/usr/bin/
 }
 
 nhb_stage3(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  THIRD STAGE CHROOT  \e[31m#################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  echo "##########################################################################################"
+  echo "###  THIRD STAGE CHROOT  #################################################################"
+  echo "##########################################################################################"
 
   ### Packages to install to chroot
   arm="abootimg cgpt fake-hwclock ntpdate vboot-utils vboot-kernel-utils uboot-mkimage"
@@ -110,9 +110,9 @@ nhb_stage3(){
 }
 
 nhb_stage4(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  FOURTH STAGE CHROOT  \e[31m################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  echo "##########################################################################################"
+  echo "###  FOURTH STAGE CHROOT  ################################################################"
+  echo "##########################################################################################"
 
   ### Modify kismet configuration to work with gpsd and socat
   sed -i 's/\# logprefix=\/some\/path\/to\/logs/logprefix=\/captures\/kismet/g' $kalirootfs/etc/kismet/kismet.conf
@@ -201,9 +201,9 @@ nhb_stage4(){
 }
 
 nhb_clean(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  CLEAN UP CHROOT  \e[31m####################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  echo "##########################################################################################"
+  echo "###  CLEAN UP CHROOT  ####################################################################"
+  echo "##########################################################################################"
 
   ### Run clean-up script
   cp -rf $maindir/files/config/cleanup $kalirootfs/cleanup
@@ -218,6 +218,10 @@ nhb_clean(){
 }
 
 nhb_zip(){
+  echo "##########################################################################################"
+  echo "###  CREATING ZIP  #######################################################################"
+  echo "##########################################################################################"
+
   ### Create base flashable zip
   cp -rf $maindir/files/flash $workingdir/
   mkdir -p $workingdir/flash/data/local/
@@ -251,7 +255,7 @@ nhb_zip(){
   echo "Compressing kali rootfs, please wait"
   tar jcf kalifs.tar.bz2 $kalirootfs
   mv kalifs.tar.bz2 $workingdir/flash/data/local/
-  #tar jcvf $workingdir/flash/data/local/kalifs.tar.bz2 $workingdir/kali-$architecture
+  #tar jcvf $workingdir/flash/data/local/kalifs.tar.bz2 $workingdir/$kalirootfs
   echo "Structure for flashable zip file is complete."
 
   cd $workingdir/files/flash/
