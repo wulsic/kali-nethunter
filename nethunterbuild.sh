@@ -77,7 +77,7 @@ nhb_setup(){
   export kernelbuild="source $maindir/scripts/kernelbuild.sh"
 
   ### Checks for existing build directory exists
-  if [ -d "$maindir" ]; then
+  if [ -d $maindir ]; then
     echo "Previous install found"
     cd $maindir
   else
@@ -141,9 +141,9 @@ nhb_setup(){
 ### Calls outside scripts to do the actual building
 nhb_build(){
   case $buildtype in
-    rootfs) $rootfsbuild;;
-    kernel) $kernelbuild;;
-    all) $rootfsbuild; $kernelbuild;;
+    rootfs) source $maindir/scripts/rootfsbuild.sh;;
+    kernel) source $maindir/scripts/kernelbuild.sh;;
+    all) source $maindir/scripts/rootfsbuild.sh; source $maindir/scripts/kernelbuild.sh;;
   esac
 }
 
