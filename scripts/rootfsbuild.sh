@@ -45,7 +45,8 @@ nhb_stage2(){
   cp -rf $maindir/files/config/interfaces $kalirootfs/etc/network/interfaces
 
   #### Install Local files
-  cp -rf $maindir/files/bin/{s,start-*} $kalirootfs/usr/bin/
+  cp -rf $maindir/files/bin/s $kalirootfs/usr/bin/s
+  cp -rf $maindir/files/bin/start-update.sh $kalirootfs/usr/bin/start-update.sh
   cp -rf $maindir/files/bin/hid/* $kalirootfs/usr/bin/
   cp -rf $maindir/files/bin/msf/*.sh $kalirootfs/usr/bin/
 }

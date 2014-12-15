@@ -169,8 +169,9 @@ nhb_output(){
 }
 
 
-### Set window size
+### Set window size and clear
 printf '\033[8;40;90t'
+clear
 
 ### Defaults for script
 outputdir=~/NetHunter-Builds
