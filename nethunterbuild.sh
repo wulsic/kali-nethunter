@@ -107,6 +107,7 @@ nhb_setup(){
       cd ..
       rm -rf lz4-r112.tar.gz lz4-r112
     fi
+    mkdir -p $maindir/rootfs
     cd $maindir
   fi
 
