@@ -263,3 +263,11 @@ nhb_zip(){
   sha1sum NetHunter-$date.zip > $workingdir/NetHunter-$date.sha1sum
   sleep 5
 }
+
+nhb_setup
+nhb_stage1
+nhb_stage2
+nhb_stage3
+nhb_stage4
+nhb_clean
+nhb_zip
