@@ -122,8 +122,8 @@ nhb_setup(){
   source $maindir/devices/config/flounder.sh
   source $maindir/devices/config/hammerhead.sh
   source $maindir/devices/config/manta.sh
-  source $maindir/devices/config/grouper-tilapia.sh
-  source $maindir/devices/config/flo-deb.sh
+  source $maindir/devices/config/groupertilapia.sh
+  source $maindir/devices/config/flodeb.sh
   source $maindir/devices/config/mako.sh
   source $maindir/devices/config/bacon.sh
 
