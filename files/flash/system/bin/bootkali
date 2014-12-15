@@ -1,0 +1,238 @@
+busybox=/data/local/bin/busybox
+su 0 setenforce 0
+
+#########  CHECK FOR ROOT #########
+f_checkforroot(){
+perm=$(id|$busybox cut -b 5)
+if [ "$perm" != "0" ];then echo "ROOT NOT DETECTED! Type: su or install SuperSU to fix"; exit; fi
+}
+
+#########  EXPORT #########
+#$busybox mount -o rw,remount /system
+export bin=/system/bin
+export mnt=/data/local/kali-armhf
+PRESERVED_PATH=$PATH
+export PATH=/usr/bin:/usr/sbin:/bin:/usr/local/bin:/usr/local/sbin:$PATH
+export TERM=linux
+export HOME=/root
+export LOGNAME=root
+unset LD_PRELOAD
+
+######### SET DNS ########
+
+rm -f /data/local/kali-armhf/etc/resolv.conf # remove dns entries
+touch /data/local/kali-armhf/etc/resolv.conf # create empty resolv.conf
+
+for i in 1 2 3 4; do
+   if [[  -z $(getprop net.dns${i}) ]]; then
+      # we go through 1-4 dns servers and break out of loop on empty
+      break
+   else
+      # add local/device dns server first
+      echo "nameserver $(getprop net.dns${i})" >> /data/local/kali-armhf/etc/resolv.conf
+   fi
+done
+
+# lastly add two default dns entries
+echo "nameserver 208.67.222.222" >> /data/local/kali-armhf/etc/resolv.conf
+echo "nameserver 208.67.220.220" >> /data/local/kali-armhf/etc/resolv.conf
+
+#########  MOUNT #########
+
+if [ "$($busybox mountpoint $mnt/dev)" == "$mnt/dev is a mountpoint" ]; then
+	# Files exist in /dev so we can assume its mounted and we have root
+	clear
+else
+	f_checkforroot
+
+	$busybox mount -o bind /system $mnt/system
+	$busybox mount -o bind /sdcard $mnt/sdcard
+	$busybox mount -o bind /dev $mnt/dev
+	$busybox mount -t devpts devpts $mnt/dev/pts
+	$busybox mount -t proc proc $mnt/proc
+	$busybox mount -t sysfs sysfs $mnt/sys
+
+	$busybox chmod 666 /dev/null
+
+	# SET 250MB TO ALLOW POSTGRESQL #
+	$busybox sysctl -w kernel.shmmax=268435456
+
+	# NETWORK SETTINGS #
+	$busybox sysctl -w net.ipv4.ip_forward=1
+	echo "127.0.0.1 localhost" > $mnt/etc/hosts
+	echo "kali" > $mnt/proc/sys/kernel/hostname
+
+	clear
+fi
+
+# EXECUTE CHROOT / ADD ARGUMENTS TO LAUNCH SPECIFIC PROGRAMS
+#
+# ---------------  START / STOP ARGUMENTS  ----------------- #
+# apache, beef-xss, dhcp, dnsmasq, hid-cmd, openvpn, ssh,
+# mana {stop}, mana-full, mana-noup, mana-noupeap, mana-simple
+# msf,
+# ---------------  SINGLE ARGUMENT ------------------------- #
+# hid-cmd, hid-cmd-elevated-win7, hid-cmd-elevated-win8, wifite
+# iptables, update
+# start-rev-met, start-rev-tcp, start-rev-met-elevated-win[8-7]
+# start-rev-tcp-elevated-win[8-7]
+
+if [ $# -eq 0 ]; then
+	$busybox chroot $mnt /bin/bash -l
+else
+   	#APACHE
+
+   	if [ "$1" == "apache" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service apache2 start
+   	fi
+   	if [ "$1" == "apache" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service apache2 stop
+   	fi
+
+   	#BEEF-XSS
+
+   	if [ "$1" == "beef-xss" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service beef-xss start
+   		sleep 35
+   		am start -a android.intent.action.VIEW -d http://127.0.0.1:3000/ui/panel
+   	fi
+   	if [ "$1" == "beef-xss" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service beef-xss stop
+   	fi
+
+   	#DHCP
+
+   	if [ "$1" == "dhcp" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service isc-dhcp-server start
+   	fi
+   	if [ "$1" == "dhcp" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service isc-dhcp-server stop
+   	fi
+
+   	#DNSMASQ
+
+   	if [ "$1" == "dnsmasq" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service dnsmasq start
+   	fi
+   	if [ "$1" == "dnsmasq" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service dnsmasq stop
+   	fi
+
+   	#HID-CMD
+
+   	if [ "$1" == "hid-cmd" ]; then
+   		$busybox chroot $mnt /usr/bin/hid-cmd.py |/system/bin/sh
+   	fi
+
+   	#HID-CMD-ELEVATED-WIN7
+
+   	if [ "$1" == "hid-cmd-elevated-win7" ]; then
+   		$busybox chroot $mnt /usr/bin/hid-cmd-elevated-win7.py |/system/bin/sh
+   	fi
+
+   	#HID-CMD-ELEVATED-WIN8
+
+   	if [ "$1" == "hid-cmd-elevated-win8" ]; then
+   		$busybox chroot $mnt /usr/bin/hid-cmd-elevated-win8.py |/system/bin/sh
+   	fi
+
+   	#HOSTAPD
+
+   	if [ "$1" == "hostapd" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/sbin/hostapd /etc/hostapd/hostapd.conf >/dev/null 2>&1 </dev/null &
+   	fi
+   	if [ "$1" == "hostapd" ] && [ "$2" == "stop" ]; then
+   		killall hostapd 2> /dev/null
+   	fi
+
+   	#IPTABLES
+
+   	if [ "$1" == "iptables" ]; then
+   		$busybox chroot $mnt sh /sdcard/files/iptables.conf
+   	fi
+
+   	#MANA
+
+   	if [ "$1" == "mana-full" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/bin/start-mana-full
+   	fi
+   	if [ "$1" == "mana-noup" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/bin/start-mana-noup
+   	fi
+   	if [ "$1" == "mana-noupeap" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/bin/start-mana-noupeap
+   	fi
+   	if [ "$1" == "mana-simple" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/bin/start-mana-simple
+   	fi
+   	if [ "$1" == "mana" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt /usr/bin/stop-mana
+   	fi
+
+   	#MSF
+
+   	if [ "$1" == "msf" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt /usr/bin/start-msf.sh
+   	fi
+   	if [ "$1" == "msf" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt /usr/bin/stop-msf.sh
+   	fi
+
+
+   	#OPENVPN
+
+   	if [ "$1" == "openvpn" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service openvpn start
+   	fi
+   	if [ "$1" == "openvpn" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service openvpn stop
+   	fi
+
+   	#REVERSE-MET
+
+   	if [ "$1" == "start-rev-met" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-met.sh |/system/bin/sh
+   	fi
+   	if [ "$1" == "start-rev-met-elevated-win7" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-met-elevated-win7.sh |/system/bin/sh
+   	fi
+   	if [ "$1" == "start-rev-met-elevated-win8" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-met-elevated-win8.sh |/system/bin/sh
+   	fi
+   	if [ "$1" == "start-rev-tcp" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-tcp.py |/system/bin/sh
+   	fi
+   	if [ "$1" == "start-rev-tcp-elevated-win7" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-tcp-elevated-win7.py |/system/bin/sh
+   	fi
+   	if [ "$1" == "start-rev-tcp-elevated-win8" ]; then
+   		$busybox chroot $mnt /usr/bin/rev-tcp-elevated-win8.py |/system/bin/sh
+   	fi
+
+   	#SSH
+
+   	if [ "$1" == "ssh" ] && [ "$2" == "start" ]; then
+   		$busybox chroot $mnt service ssh start
+   	fi
+   	if [ "$1" == "ssh" ] && [ "$2" == "stop" ]; then
+   		$busybox chroot $mnt service ssh stop
+   	fi
+
+   	#UPDATE
+
+   	if [ "$1" == "update" ]; then
+   		$busybox chroot $mnt /usr/bin/start-update.sh
+   	fi
+
+   	#WIFITE
+
+		if [ "$1" == "wifite" ]; then
+        $busybox chroot $mnt wifite
+   	fi
+
+		#KALIMENU
+
+		if [ "$1" == "kalimenu" ]; then
+			$busybox chroot $mnt /usr/bin/kalimenu
+		fi
+fi
