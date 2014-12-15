@@ -23,7 +23,7 @@ nhb_check(){
   ### If nothing is selectd, display error and exit immediately
   if [[ $buildtype == "" ]]&&[[ $androidversion == "" ]]&&[[ $device == "" ]]; then
     echo "You must specify arguments in order for the script to work."
-    echo "Use the flag -help or -h to see what arguments are needed."
+    echo "Use the argument -h to see what arguments are needed."
     exit
   fi
   ### If build type is blank, display error and set $error var to 1
@@ -66,22 +66,22 @@ nhb_check(){
 nhb_setup(){
   ### Sets up variables used throughout the script
   export date=$(date +%m%d%Y)
+  export architecture="armhf"
   export maindir=~/NetHunter
   export workingdir=$maindir/working-directory-$date
   export rootfsdir=$maindir/rootfs
-  export rootfs=$rootfsdir/kali-armhf
+  export kalirootfs=$rootfsdir/kali-$architecture
   export boottools=$maindir/files/bin/boottools
   export toolchaindir=$maindir/files/toolchains
-  export architecture="armhf"
-  export rootfsbuild=source $maindir/scripts/rootfsbuild.sh
-  export kernelbuild=source $maindir/scripts/kernelbuild.sh)
+  export rootfsbuild="source $maindir/scripts/rootfsbuild.sh"
+  export kernelbuild="source $maindir/scripts/kernelbuild.sh"
 
   ### Checks for existing build directory exists
   if [ -d "$toolchains" ]&&[ -d "$rootfsdir" ]; then
     echo "Previous install found"
     cd $maindir
   else
-    echo "Install not found. Installing..."
+    echo "NetHunter build directory not found. Installing..."
     git clone -b nethunterbuild https://github.com/offensive-security/kali-nethunter $maindir
     ### Make Directories and Prepare to build
     git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
@@ -97,7 +97,7 @@ nhb_setup(){
     apt-get install -y libncurses5:i386
     if [ ! -e "/usr/bin/lz4c" ]; then
       echo "Missing lz4c which is needed to build certain kernels.  Downloading and making for system:"
-      cd $basepwd
+      cd $maindir
       wget http://lz4.googlecode.com/files/lz4-r112.tar.gz
       tar -xf lz4-r112.tar.gz
       cd lz4-r112
@@ -132,7 +132,7 @@ nhb_setup(){
 }
 
 ### Calls outside scripts to do the actual building
-nhb_process(){
+nhb_build(){
   case $buildtype in
     rootfs) $rootfsbuild;;
     kernel) $kernelbuild;;
@@ -250,3 +250,6 @@ done
 
 nhb_check
 nhb_setup
+nhb_build
+nhb_output
+echo "Build complete."
