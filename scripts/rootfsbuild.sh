@@ -6,7 +6,7 @@ nhb_setup(){
   ### BUILD SETUP ###
   ###################
   #if [[ $keepfiles == 1 ]]; then
-    rm -rf ${rootfs}/*
+    rm -rf $kalirootfs/*
   #fi
   unset CROSS_COMPILE
   # Set working folder to rootfs
