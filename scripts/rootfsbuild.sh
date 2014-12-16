@@ -121,9 +121,9 @@ nhb_stage4(){
   sed -i 's/gpshost=localhost:2947/gpshost=127.0.0.1:2947/g' $kalirootfs/etc/kismet/kismet.conf
 
   ### Copy over our kali specific mana config files
-  cp -rf ${basepwd}/files/bin/mana/start-mana* ${rootfs}/kali-$architecture/usr/bin/
-  cp -rf ${basepwd}/files/bin/mana/stop-mana ${rootfs}/kali-$architecture/usr/bin/
-  cp -rf ${basepwd}/files/bin/mana/*.sh ${rootfs}/kali-$architecture/usr/share/mana-toolkit/run-mana/
+  cp -rf $maindir/files/bin/mana/start-mana* $kairootfs/usr/bin/
+  cp -rf $maindir/files/bin/mana/stop-mana $kalirootfs/kali-$architecture/usr/bin/
+  cp -rf $maindir/files/bin/mana/*.sh $kalirootfs/kali-$architecture/usr/share/mana-toolkit/run-mana/
   dos2unix $kalirootfs/usr/share/mana-toolkit/run-mana/*
   dos2unix $kalirootfs/etc/mana-toolkit/*
   chmod 755 $kalirootfs/usr/share/mana-toolkit/run-mana/*
