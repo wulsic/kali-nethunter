@@ -141,9 +141,9 @@ nhb_setup(){
 ### Calls outside scripts to do the actual building
 nhb_build(){
   case $buildtype in
-    rootfs) sh $maindir/scripts/rootfsbuild.sh;;
-    kernel) sh $maindir/scripts/kernelbuild.sh;;
-    all) sh $maindir/scripts/rootfsbuild.sh; sh $maindir/scripts/kernelbuild.sh;;
+    rootfs) $rootfsbuild;;
+    kernel) $kernelbuild;;
+    all) $rootfsbuild; $kernelbuild;;
   esac
 }
 

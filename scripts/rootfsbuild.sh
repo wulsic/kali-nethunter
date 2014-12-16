@@ -121,15 +121,9 @@ nhb_stage4(){
   sed -i 's/gpshost=localhost:2947/gpshost=127.0.0.1:2947/g' $kalirootfs/etc/kismet/kismet.conf
 
   ### Copy over our kali specific mana config files
-  cp -rf $maindir/files/bin/mana/start-mana-full $kalirootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/start-mana-noup $kalirootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/start-mana-noupeap $kalirootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/start-mana-simple $kalirootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/stop-mana $kalirootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/start-nat-full-mod.sh $kalirootfs/usr/share/mana-toolkit/run-mana/
-  cp -rf $maindir/files/bin/mana/start-nat-simple-mod.sh $kalirootfs/usr/share/mana-toolkit/run-mana/
-  cp -rf $maindir/files/bin/mana/start-noupsream-eap-mod.sh $kalirootfs/usr/share/mana-toolkit/run-mana/
-  cp -rf $maindir/files/bin/mana/start-upstream-mod.sh $kalirootfs/usr/share/mana-toolkit/run-mana/
+  cp -rf ${basepwd}/files/bin/mana/start-mana* ${rootfs}/kali-$architecture/usr/bin/
+  cp -rf ${basepwd}/files/bin/mana/stop-mana ${rootfs}/kali-$architecture/usr/bin/
+  cp -rf ${basepwd}/files/bin/mana/*.sh ${rootfs}/kali-$architecture/usr/share/mana-toolkit/run-mana/
   dos2unix $kalirootfs/usr/share/mana-toolkit/run-mana/*
   dos2unix $kalirootfs/etc/mana-toolkit/*
   chmod 755 $kalirootfs/usr/share/mana-toolkit/run-mana/*
