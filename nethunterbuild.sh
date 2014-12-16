@@ -65,6 +65,7 @@ nhb_check(){
 ### Sets up variables and dependencies
 nhb_setup(){
   ### Sets up variables used throughout the script
+  echo "Setting variables."
   export date=$(date +%m%d%Y)
   export architecture="armhf"
   export maindir=~/NetHunter
@@ -76,22 +77,28 @@ nhb_setup(){
   export rootfsbuild="source $maindir/scripts/rootfsbuild.sh"
   export kernelbuild="source $maindir/scripts/kernelbuild.sh"
 
+  echo "Checking for previous installation."
   ### Checks for existing build directory exists
   if [ -d $maindir ]; then
-    echo "Previous install found"
+    echo "Previous install found."
     cd $maindir
   else
-    echo "NetHunter build directory not found. Installing..."
+    echo "NetHunter build directory not found. Downloading required files..."
+    echo "Cloning NetHunter files to $maindir."
     git clone -b nethunterbuild https://github.com/offensive-security/kali-nethunter $maindir
     mkdir -p $maindir/rootfs
     ### Make Directories and Prepare to build
+    echo "Cloning toolchain to $toolchaindir/gcc-arm-linux-gnueabihf-4.7."
     git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
     export PATH=${PATH}:$toolchaindir/gcc-arm-linux-gnueabihf-4.7/bin
     ### Build Dependencies for script
+    echo "Updating sources."
     apt-get update
+    echo "Installing dependencies needed to build NetHunter."
     apt-get install -y git-core gnupg flex bison gperf libesd0-dev build-essential zip curl libncurses5-dev zlib1g-dev libncurses5-dev gcc-multilib g++-multilib \
     parted kpartx debootstrap pixz qemu-user-static abootimg cgpt vboot-kernel-utils vboot-utils uboot-mkimage bc lzma lzop automake autoconf m4 dosfstools pixz rsync \
-    schedtool git dosfstools e2fsprogs device-tree-compiler ccache dos2unix
+    schedtool git dosfstools e2fsprogs device-tree-compiler ccache dos2unix zip
+    echo "determining host architecture."
     MACHINE_TYPE=`uname -m`
     if [ ${MACHINE_TYPE} == 'x86_64' ]; then
       dpkg --add-architecture i386
@@ -102,6 +109,7 @@ nhb_setup(){
     else
       apt-get install -y libncurses5
     fi
+    echo "Checking for /usr/bin/lz4c."
     if [ ! -e "/usr/bin/lz4c" ]; then
       echo "Missing lz4c which is needed to build certain kernels.  Downloading and making for system:"
       cd $maindir
@@ -117,6 +125,7 @@ nhb_setup(){
     cd $maindir
   fi
 
+  echo "Processing kernel build scripts."
   ### Reads sub-scripts for various functions for kernel building
   source $maindir/devices/config/shamu.sh
   source $maindir/devices/config/flounder.sh
@@ -127,13 +136,16 @@ nhb_setup(){
   source $maindir/devices/config/mako.sh
   source $maindir/devices/config/bacon.sh
 
+  echo "Checking NetHunter directory for any updated files."
   ### Makes sure all of the files are up to date
   cd $maindir
   for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
   cd $maindir
   if [ -d "$workingdir" ]; then
+    echo "Delete previous working directory."
     rm -rf $workingdir
   fi
+  echo "Creating working directory."
   mkdir -p $workingdir
   cd $workingdir
 }
@@ -141,15 +153,28 @@ nhb_setup(){
 ### Calls outside scripts to do the actual building
 nhb_build(){
   case $buildtype in
-    rootfs) $rootfsbuild;;
-    kernel) $kernelbuild;;
-    all) $rootfsbuild; $kernelbuild;;
+    rootfs)
+      echo "Starting RootFS build."
+      $rootfsbuild
+      echo "RootFS build complete.";;
+    kernel)
+      echo "Starting kernel build."
+      $kernelbuild
+      echo "Kernel build complete.";;
+    all)
+      echo "Starting RootFS Build."
+      $rootfsbuild
+      echo "RootFS build complete."
+      echo "Starting Kernel build."
+      $kernelbuild
+      echo "Kernel build complete.";;
   esac
 }
 
 ### Moves built files to output directory
 nhb_output(){
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
+    echo "Moving NetHunter RootFS and SHA1 sum from working directory to output directory."
     cd $workingdir
     mkdir -p $outputdir/RootFS
     mv update-kali-$date.zip $outputdir/RootFS/NetHunter-$date.zip
@@ -158,6 +183,7 @@ nhb_output(){
     echo "NetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum"
   fi
   if [[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.zip ]]&&[[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.sha1sum ]]; then
+    echo "Moving kernel and SHA1 sum from working directory to output directory."
     cd $workingdir
     mkdir -p $outputdir/Kernels/$device
     mv kernel-kali-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
@@ -264,4 +290,3 @@ nhb_check
 nhb_setup
 nhb_build
 nhb_output
-echo "Build complete."
