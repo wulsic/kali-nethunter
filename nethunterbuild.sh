@@ -196,8 +196,8 @@ nhb_output(){
     echo -e "\e[34mMoving kernel and SHA1 sum from working directory to output directory.\e[0m"
     cd $workingdir
     mkdir -p $outputdir/Kernels/$device
-    mv kernel-kali-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
-    mv kernel-kali-$date.sha1sum $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum
+    mv $workingdir/Kernel-$device-$androidversion-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
+    mv $workingdir/Kernel-$device-$androidversion-$date.sha1sum $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum
     echo -e "\e[34mKernel is located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip\e[0m"
     echo -e "\e[34mKernel's SHA1 sum located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum\e[0m"
   fi

@@ -86,3 +86,4 @@ nhb_zip_kernel(){
 
 
 nhb_${device}_${androidversion}
+nhb_zip_kernel
