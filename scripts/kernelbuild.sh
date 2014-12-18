@@ -75,15 +75,13 @@ nhb_kernel_build(){
 nhb_zip_kernel(){
   apt-get install -y zip
   d_clear
-  cd ${basedir}/flashkernel/
-  zip -r6 kernel-kali-$VERSION.zip *
-  mv kernel-kali-$VERSION.zip ${basedir}
+  cd $workingdir/flashkernel/
+  zip -r6 Kernel-$device-$androidversion-$date.zip *
+  mv Kernel-$device-$androidversion-$date.zip ${basedir}
   cd ${basedir}
   # Generate sha1sum
-  echo "Generating sha1sum for kernelkali$1.zip"
-  sha1sum kernel-kali-$VERSION.zip > ${basedir}/kernel-kali-$VERSION.sha1sum
-  echo "Kernel can be flashed seperatley if needed using kernel-kali-$VERSION.zip"
-  echo "Transfer file to device and flash in recovery"
+  echo "Generating sha1sum for Kernel-$device-$androidversion-$date.zip"
+  sha1sum Kernel-$device-$androidversion-$date.zip > ${basedir}/Kernel-$device-$androidversion-$date.sha1sum
   sleep 5
 }
 
