@@ -5,7 +5,7 @@ nhb_setup(){
   ###################
   ### BUILD SETUP ###
   ###################
-  echo -e "\e[31mDeleting existing RootFS.\e[0m"
+  echo -e "\e[34mDeleting existing RootFS.\e[0m"
   rm -rf $kalirootfs/*
   unset CROSS_COMPILE
   # Set working folder to rootfs
@@ -17,7 +17,7 @@ nhb_stage1(){
   echo -e "\e[31m###\e[0m  FIRST STAGE CHROOT  \e[31m#################################################################\e[0m"
   echo -e "\e[31m##########################################################################################\e[0m"
 
-  echo -e "\e[31mCreating Kali chroot.\e[0m"
+  echo -e "\e[34mCreating Kali chroot.\e[0m"
   debootstrap --foreign --arch $architecture kali $kalirootfs http://http.kali.org/kali
   cp /usr/bin/qemu-arm-static $kalirootfs/usr/bin/
 }
@@ -27,28 +27,28 @@ nhb_stage2(){
   echo -e "\e[31m###\e[0m  SECOND STAGE CHROOT  \e[31m################################################################\e[0m"
   echo -e "\e[31m##########################################################################################\e[0m"
 
-  echo -e "\e[31mFinish configuring chroot.\e[0m"
+  echo -e "\e[34mFinish configuring chroot.\e[0m"
   LANG=C chroot $kalirootfs /debootstrap/debootstrap --second-stage
 
-  echo -e "\e[31mCopying sources.list.\e[0m"
+  echo -e "\e[34mCopying sources.list.\e[0m"
   ### Copies apt-get sources file to chroot
   cp -rf $maindir/files/config/sources.list $kalirootfs/etc/apt/sources.list
 
-  echo -e "\e[31mCopying hostname.\e[0m"
+  echo -e "\e[34mCopying hostname.\e[0m"
   ### Define hostname
   cp -rf $maindir/files/config/hostname $kalirootfs/etc/hostname
 
-  echo -e "\e[31mCopying .bash_profile.\e[0m"
+  echo -e "\e[34mCopying .bash_profile.\e[0m"
   ### Set up ~/.bash_profile
   cp -rf $maindir/files/config/bashprofile $kalirootfs/root/.bash_profile
 
-  echo -e "\e[31mCopying network settings.\e[0m"
+  echo -e "\e[34mCopying network settings.\e[0m"
   #### Set up network settings
   cp -rf $maindir/files/config/hosts $kalirootfs/etc/hosts
   cp -rf $maindir/files/config/resolv.conf $kalirootfs/etc/resolv.conf
   cp -rf $maindir/files/config/interfaces $kalirootfs/etc/network/interfaces
 
-  echo -e "\e[31mCopying scripts to Kali /usr/bin.\e[0m"
+  echo -e "\e[34mCopying scripts to Kali /usr/bin.\e[0m"
   #### Install Local files
   cp -rf $maindir/files/bin/s $kalirootfs/usr/bin/s
   cp -rf $maindir/files/bin/start-update.sh $kalirootfs/usr/bin/
@@ -79,13 +79,13 @@ nhb_stage3(){
   export LC_ALL=C
   export DEBIAN_FRONTEND=noninteractive
 
-  echo -e "\e[31mMounting partitions.\e[0m"
+  echo -e "\e[34mMounting partitions.\e[0m"
   ### Mount partitions
   mount -t proc proc $kalirootfs/proc
   mount -o bind /dev/ $kalirootfs/dev/
   mount -o bind /dev/pts $kalirootfs/dev/pts
 
-  echo -e "\e[31mCreating stage-three script.\e[0m"
+  echo -e "\e[34mCreating stage-three script.\e[0m"
   ### Create third-stage script
   echo "#!/bin/bash" > $kalirootfs/third-stage
   echo "dpkg-divert --add --local --divert /usr/sbin/invoke-rc.d.chroot --rename /usr/sbin/invoke-rc.d" >> $kalirootfs/third-stage
@@ -111,7 +111,7 @@ nhb_stage3(){
   ### Copy debconf.set to chroot
   cp -rf $maindir/files/config/debconf.set $kalirootfs/debconf.set
 
-  echo -e "\e[31mExecuting stage-three script.\e[0m"
+  echo -e "\e[34mExecuting stage-three script.\e[0m"
   cp -rf $maindir/files/bin/safe-apt-get $kalirootfs/usr/bin/safe-apt-get
   chmod 755 $kalirootfs/third-stage
   chmod 755 $kalirootfs/third-stage
@@ -123,13 +123,13 @@ nhb_stage4(){
   echo -e "\e[31m###\e[0m  FOURTH STAGE CHROOT  \e[31m################################################################\e[0m"
   echo -e "\e[31m##########################################################################################\e[0m"
 
-  echo -e "\e[31mModify Kismet files.\e[0m"
+  echo -e "\e[34mModify Kismet files.\e[0m"
   ### Modify kismet configuration to work with gpsd and socat
   sed -i 's/\# logprefix=\/some\/path\/to\/logs/logprefix=\/captures\/kismet/g' $kalirootfs/etc/kismet/kismet.conf
   sed -i 's/# ncsource=wlan0/ncsource=wlan1/g' $kalirootfs/etc/kismet/kismet.conf
   sed -i 's/gpshost=localhost:2947/gpshost=127.0.0.1:2947/g' $kalirootfs/etc/kismet/kismet.conf
 
-  echo -e "\e[31mCopying Mana files.\e[0m"
+  echo -e "\e[34mCopying Mana files.\e[0m"
   ### Copy over our kali specific mana config files
   cp -rf $maindir/files/bin/mana/start-mana* $kairootfs/usr/bin/
   cp -rf $maindir/files/bin/mana/stop-mana $kalirootfs/usr/bin/
@@ -139,22 +139,22 @@ nhb_stage4(){
   chmod 755 $kalirootfs/usr/share/mana-toolkit/run-mana/*
   chmod 755 $kalirootfs/usr/bin/*.sh
 
-  echo -e "\e[31mInstalling Rawr.\e[0m"
+  echo -e "\e[34mInstalling Rawr.\e[0m"
   ### Install Rawr (https://bitbucket.org/al14s/rawr/wiki/Usage)
   git clone https://bitbucket.org/al14s/rawr.git $kalirootfs/opt/rawr
   chmod 755 $kalirootfs/opt/rawr/install.sh
 
-  echo -e "\e[31mCopying Wifite dictionary.\e[0m"
+  echo -e "\e[34mCopying Wifite dictionary.\e[0m"
   ### Install Dictionary for wifite
   mkdir -p $kalirootfs/opt/dic
   tar xvf $maindir/files/dic/89.tar.gz -C $kalirootfs/opt/dic
 
-  echo -e "\e[31mInstalling Pingen.\e[0m"
+  echo -e "\e[34mInstalling Pingen.\e[0m"
   ### Install Pingen which generates DLINK WPS pins for some routers
   wget https://raw.githubusercontent.com/devttys0/wps/master/pingens/dlink/pingen.py -O $kalirootfs/usr/bin/pingen
   chmod 755 $kalirootfs/usr/bin/pingen
 
-  echo -e "\e[31mInstalling Spiderfoot.\e[0m"
+  echo -e "\e[34mInstalling Spiderfoot.\e[0m"
   ### Install Spiderfoot
   LANG=C chroot $kalirootfs pip install cherrypy
   cd $kalirootfs/opt/
@@ -162,17 +162,17 @@ nhb_stage4(){
   tar xvf spiderfoot.tar.gz && rm spiderfoot.tar.gz && mv spiderfoot-2.2.0-final spiderfoot
   cd $workingdir
 
-  echo -e "\e[31mChanging Kismet log folder.\e[0m"
+  echo -e "\e[34mChanging Kismet log folder.\e[0m"
   ### Modify Kismet log saving folder
   sed -i 's/hs/\/captures/g' $kalirootfs/etc/kismet/kismet.conf
 
-  echo -e "\e[31mCopying Kali menu.\e[0m"
+  echo -e "\e[34mCopying Kali menu.\e[0m"
   ### Kali Menu (bash script) to quickly launch common Android Programs
   cp -rf $maindir/files/menu/kalimenu $kalirootfs/usr/bin/kalimenu
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/kalimenu
   sleep 5
 
-  echo -e "\e[31mInstalling ADB and fastboot.\e[0m"
+  echo -e "\e[34mInstalling ADB and fastboot.\e[0m"
   ### Installs ADB and fastboot compiled for ARM
   git clone git://git.kali.org/packages/google-nexus-tools
   cp ./google-nexus-tools/bin/linux-arm-adb $kalirootfs/usr/bin/adb
@@ -181,21 +181,21 @@ nhb_stage4(){
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/fastboot
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/adb
 
-  echo -e "\e[31mInstalling deADBolt.\e[0m"
+  echo -e "\e[34mInstalling deADBolt.\e[0m"
   ### Installs deADBolt
   curl -o deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
   cp ./deadbolt $kalirootfs/usr/bin/deadbolt
   rm -rf deadbolt
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/deadbolt
 
-  echo -e "\e[31mInstalling APFucker.py.\e[0m"
+  echo -e "\e[34mInstalling APFucker.py.\e[0m"
   ### Installs APFucker.py
   curl -o apfucker.py https://raw.githubusercontent.com/mattoufoutu/scripts/master/AP-Fucker.py
   cp ./apfucker.py $kalirootfs/usr/bin/apfucker.py
   rm -rf deadbolt
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/apfucker.py
 
-  echo -e "\e[31mInstalling HID attack script.\e[0m"
+  echo -e "\e[34mInstalling HID attack script.\e[0m"
   ### Install HID attack script and dictionaries
   cp $maindir/files/flash/system/xbin/hid-keyboard $kalirootfs/usr/bin/hid-keyboard
   cp $maindir/files/dic/pinlist.txt $kalirootfs/opt/dic/pinlist.txt
@@ -204,18 +204,18 @@ nhb_stage4(){
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/hid-keyboard
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/hid-dic
 
-  echo -e "\e[31mCopying DNSMasq.conf.\e[0m"
+  echo -e "\e[34mCopying DNSMasq.conf.\e[0m"
   ### DNSMASQ Configuration options for optional access point
   cp -rf $maindir/files/config/dnsmasq.conf $kalirootfs/etc/dnsmasq.conf
 
-  echo -e "\e[31mCreating extra directories for NetHunter.\e[0m"
+  echo -e "\e[34mCreating extra directories for NetHunter.\e[0m"
   ### Add missing folders to chroot needed
   cap=$kalirootfs/captures
   mkdir -p $kalirootfs/root/.ssh/
   mkdir -p $kalirootfs/sdcard $kalirootfs/system
   mkdir -p $cap/evilap $cap/ettercap $cap/kismet/db $cap/nmap $cap/sslstrip $cap/tshark $cap/wifite $cap/tcpdump $cap/urlsnarf $cap/dsniff $cap/honeyproxy $cap/mana/sslsplit
 
-  echo -e "\e[31mConfiguring Beef-xss.\e[0m"
+  echo -e "\e[34mConfiguring Beef-xss.\e[0m"
   ### In order for metasploit to work daemon,nginx,postgres must all be added to inet
   ### beef-xss creates user beef-xss. Openvpn server requires nobdy:nobody in order to work
   echo "inet:x:3004:postgres,root,beef-xss,daemon,nginx" >> $kalirootfs/etc/group
@@ -227,14 +227,14 @@ nhb_clean(){
   echo -e "\e[31m###\e[0m  CLEAN UP CHROOT  \e[31m####################################################################\e[0m"
   echo -e "\e[31m##########################################################################################\e[0m"
 
-  echo -e "\e[31mRunning clean-up script.\e[0m"
+  echo -e "\e[34mRunning clean-up script.\e[0m"
   ### Run clean-up script
   cp -rf $maindir/files/config/cleanup $kalirootfs/cleanup
   chmod +x $kalirootfs/cleanup
   LANG=C chroot $kalirootfs /cleanup
   sleep 5
 
-  echo -e "\e[31mUnmounting partitions.\e[0m"
+  echo -e "\e[34mUnmounting partitions.\e[0m"
   ### Unmount partitions
   umount $kalirootfs/dev/pts
   umount $kalirootfs/dev/
@@ -246,13 +246,13 @@ nhb_zip(){
   echo -e "\e[31m###\e[0m  CREATING ZIP  \e[31m#######################################################################\e[0m"
   echo -e "\e[31m##########################################################################################\e[0m"
 
-  echo -e "\e[31mCopying premade flashable directory.\e[0m"
+  echo -e "\e[34mCopying premade flashable directory.\e[0m"
   ### Create base flashable zip
   cp -rf $maindir/files/flash $workingdir/
   mkdir -p $workingdir/flash/data/local/
   mkdir -p $workingdir/flash/system/lib/modules
 
-  echo -e "\e[31mInstalling extra applications for Android.\e[0m"
+  echo -e "\e[34mInstalling extra applications for Android.\e[0m"
   ### Download/add Android applications that are useful to our chroot enviornment
   rm $workingdir/flash/data/app/*
   ### Required: Terminal application is required
@@ -270,26 +270,26 @@ nhb_zip(){
   ### Suggested: RFAnalyzer
   wget -P $workingdir/flash/data/app/ https://github.com/demantz/RFAnalyzer/raw/master/RFAnalyzer.apk
 
-  echo -e "\e[31mCleaning /dev directory.\e[0m"
+  echo -e "\e[34mCleaning /dev directory.\e[0m"
   ### Clean up chrooted /dev before packaging.
   rm -rf  $kalirootfs/dev/*
 
   ### Compress filesystem and add to zip
   cd $kalirootfs
-  echo -e "\e[31mCompressing kali rootfs, please wait.\e[0m"
+  echo -e "\e[34mCompressing kali rootfs, please wait.\e[0m"
   tar jcf kalifs.tar.bz2 $kalirootfs
-  echo -e "\e[31mMoving Kalis rootfs to zip directory.\e[0m"
+  echo -e "\e[34mMoving Kalis rootfs to zip directory.\e[0m"
   mv kalifs.tar.bz2 $workingdir/flash/data/local/
   #tar jcvf $workingdir/flash/data/local/kalifs.tar.bz2 $workingdir/$kalirootfs
-  echo -e "\e[31mStructure for flashable zip file is complete.\e[0m"
+  echo -e "\e[34mStructure for flashable zip file is complete.\e[0m"
 
-  echo -e "\e[31mCreating flashable zip.\e[0m"
+  echo -e "\e[34mCreating flashable zip.\e[0m"
   cd $workingdir/files/flash/
   zip -r6 NetHunter-$date.zip *
   mv NetHunter-$date.zip $workingdir
   cd $workingdir
   # Generate sha1sum
-  echo -e "\e[31mGenerating sha1sum for NetHunter-$date.zip.\e[0m"
+  echo -e "\e[34mGenerating sha1sum for NetHunter-$date.zip.\e[0m"
   sha1sum NetHunter-$date.zip > $workingdir/NetHunter-$date.sha1sum
   sleep 5
 }
