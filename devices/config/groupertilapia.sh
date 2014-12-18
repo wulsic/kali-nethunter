@@ -6,12 +6,12 @@ nhb_groupertilapia_kitkat(){
 
 	echo "Downloading Kernel"
 	# Kangaroo Kernel has y-cable support and kexec patch built in
-	if [[ -d $maindir/kernel/devices/groupertilapia-kitkat ]]; then
+	if [[ -d $maindir/kernel/devices/kitkat/groupertilapia ]]; then
 		echo "Copying kernel to rootfs"
-		cp -rf $maindir/kernel/devices/groupertilapia-kitkat $workingdir/kernel
+		cp -rf $maindir/kernel/devices/kitkat/groupertilapia $workingdir/kernel
 	else
-		git clone https://github.com/binkybear/kangaroo.git -b kangaroo $maindir/kernel/devices/groupertilapia-kitkat
-		cp -rf $maindir/kernel/devices/groupertilapia-kitkat $workingdir/kernel
+		git clone https://github.com/binkybear/kangaroo.git -b kangaroo $maindir/kernel/devices/kitkat/groupertilapia
+		cp -rf $maindir/kernel/devices/kitkat/groupertilapia $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	make clean

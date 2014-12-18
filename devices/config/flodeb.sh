@@ -3,12 +3,12 @@ nhb_flodeb_kitkat(){
 
 	echo "Downloading Kernel"
 	cd $workingdir
-	if [[ -d $maindir/kernel/devices/flodeb-kitkat ]]; then
+	if [[ -d $maindir/kernel/devices/kitkat/flodeb ]]; then
 		echo "Copying kernel to rootfs"
-		cp -rf $maindir/kernel/devices/flodeb-kitkat $workingdir/kernel
+		cp -rf $maindir/kernel/devices/kitkat/flodeb $workingdir/kernel
 	else
-		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-flo-3.4-kitkat-mr2 $maindir/kernel/devices/flodeb-kitkat
-		cp -rf $maindir/kernel/devices/flodeb-kitkat $workingdir/kernel
+		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-flo-3.4-kitkat-mr2 $maindir/kernel/devices/kitkat/flodeb
+		cp -rf $maindir/kernel/devices/kitkat/flodeb $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	make clean
@@ -26,12 +26,12 @@ nhb_flodeb_lollipop(){
 
 	echo "Downloading Kernel"
 	cd $workingdir
-	if [[ -d $maindir/kernel/devices/flodeb-lollipop ]]; then
+	if [[ -d $maindir/kernel/devices/lollipop/flodeb ]]; then
 		echo "Copying kernel to rootfs"
-		cp -rf $maindir/kernel/devices/flodeb-lollipop $workingdir/kernel
+		cp -rf $maindir/kernel/devices/lollipop/flodeb $workingdir/kernel
 	else
-		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-flo-3.4-lollipop-release $maindir/kernel/devices/flodeb-lollipop
-		cp -rf $maindir/kernel/devices/flodeb-lollipop $workingdir/kernel
+		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-flo-3.4-lollipop-release $maindir/kernel/devices/lollipop/flodeb
+		cp -rf $maindir/kernel/devices/lollipop/flodeb $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	chmod +x scripts/*

@@ -3,12 +3,12 @@ nhb_bacon_kitkat(){
 
 	cd $workingdir
 	echo "Downloading Kernel"
-	if [[ -d $maindir/kernel/devices/bacon-kitkat ]]; then
+	if [[ -d $maindir/kernel/devices/kitkat/bacon ]]; then
 		echo "Copying kernel to rootfs"
-		cp -rf $maindir/kernel/devices/bacon-kitkat $workingdir/kernel
+		cp -rf $maindir/kernel/devices/kitkat/bacon $workingdir/kernel
 	else
-		git clone https://github.com/binkybear/AK-OnePone.git -b cm-11.0-ak $maindir/kernel/devices/bacon-kitkat
-		cp -rf $maindir/kernel/devices/bacon-kitkat $woringdir/kernel
+		git clone https://github.com/binkybear/AK-OnePone.git -b cm-11.0-ak $maindir/kernel/devices/kitkat/bacon
+		cp -rf $maindir/kernel/devices/kitkat/bacon $woringdir/kernel
 	fi
 	cd $workingdir/kernel
 	chmod +x scripts/* ramdisk/4/mkbootimg ramdisk/4/dtbToolCM
@@ -28,10 +28,6 @@ nhb_bacon_kitkat(){
 	sleep 3
 	echo "Creating boot.img"
 	$workingdir/kernel/ramdisk/4/mkbootimg --kernel arch/arm/boot/zImage --ramdisk ramdisk/4/initrd.img --cmdline "console=ttyHSL0,115200,n8 androidboot.hardware=bacon user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3" --dt ../flashkernel/kernel/dt.img --output ../flashkernel/boot.img
-	# Copy boot.img to flash folder if it exists
-	if [ -d "$workingdir/flash/" ]; then
-		cp $workingdir/flashkernel/boot.img $workingdir/flash/boot.img
-	fi
 }
 
 nhb_bacon_lollipop(){
@@ -39,12 +35,12 @@ nhb_bacon_lollipop(){
 
 	cd $workingdir
 	echo "Downloading Kernel"
-	if [[ -d $maindir/kernel/devices/bacon-lollipop ]]; then
+	if [[ -d $maindir/kernel/devices/lollipop/bacon ]]; then
 			echo "Copying kernel to rootfs"
-			cp -rf $maindir/kernel/devices/bacon-lollipop $workingdir/kernel
+			cp -rf $maindir/kernel/devices/lollipop/bacon $workingdir/kernel
 	else
-			git clone https://github.com/binkybear/furnace-bacon.git -b cm-12.0 $maindir/kernel/devices/bacon-lollipop
-		cp -rf $maindir/kernel/devices/bacon-lollipop $workingdir/kernel
+			git clone https://github.com/binkybear/furnace-bacon.git -b cm-12.0 $maindir/kernel/devices/lollipop/bacon
+		cp -rf $maindir/kernel/devices/lollipop/bacon $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	chmod +x scripts/* ramdisk/5/mkbootimg ramdisk/5/dtbToolCM
@@ -64,8 +60,4 @@ nhb_bacon_lollipop(){
 	sleep 3
 	echo "Creating boot.img"
 	$workingdir/kernel/ramdisk/5/mkbootimg --kernel arch/arm/boot/zImage --ramdisk ramdisk/5/initrd.img --cmdline "console=ttyHSL0,115200,n8 androidboot.hardware=bacon user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.selinux=permissive" --dt ../flashkernel/kernel/dt.img --output ../flashkernel/boot.img
-	# Copy boot.img to flash folder if it exists
-	if [ -d "$workingdir/flash/" ]; then
-		cp $workingdir/flashkernel/boot.img $workingdir/flash/boot.img
-	fi
 }

@@ -1,17 +1,14 @@
-#####################################################
-# Create Nexus 5 Stock Kernel (4.4+)
-#####################################################
 nhb_hammerhead_kitkat(){
 	nhb_kernel_build_setup
 
 	cd $workingdir
 	echo "Downloading Kernel"
-	if [[ -d $maindir/devices/kernels/hammerhead-kitkat ]]; then
+	if [[ -d $maindir/devices/kernels/kitkat/hammerhead ]]; then
 		echo "Copying kernel to rootfs"
-		cp -rf $maindir/devices/kernels/hammerhead-kitkat $workingdir/kernel
+		cp -rf $maindir/devices/kernels/kitkat/hammerhead $workingdir/kernel
 	else
-		git clone https://github.com/binkybear/furnace_kernel_lge_hammerhead.git -b android-4.4 $maindir/devices/kernels/hammerhead-kitkat
-		cp -rf $maindir/devices/kernels/hammerhead-kitkat $workingdir/kernel
+		git clone https://github.com/binkybear/furnace_kernel_lge_hammerhead.git -b android-4.4 $maindir/devices/kernels/kitkat/hammerhead
+		cp -rf $maindir/devices/kernels/kitkat/hammerhead $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	make clean
@@ -24,9 +21,6 @@ nhb_hammerhead_kitkat(){
 	nhb_kernel_build
 }
 
-#####################################################
-# Create Nexus 5 Stock Kernel (5)
-#####################################################
 nhb_hammerhead_lollipop(){
 		nhb_kernel_build_setup
 

@@ -32,12 +32,12 @@ nhb_check(){
     error=1
   fi
   ### If Kernel build is selected, but no device specified, display error and set $error var to 1
-  if [[ $device == "" ]]&&[[ $buildtype == "kernel" ]]; then
+  if [[ $device == "" && ( $buildtype == "kernel" || $buildtype == "both" ) ]]; then
     echo -e "\e[34mThe build cannot continue because a device was not specified.\e[0m"
     error=1
   fi
   ### If Kernel build is selected but no android version selected, display error and set $error var to 1
-  if [[ $androidversion == "" ]]&&[[ $buildtype == "kernel" ]]; then
+  if [[ $androidversion == "" && ( $buildtype == "kernel" || $buildtype == "both" ) ]]; then
     echo -e "\e[34mThe build cannot continue because an Android version was not specified.\e[0m"
     error=1
   fi
@@ -166,7 +166,7 @@ nhb_build(){
       echo -e "\e[34mStarting kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[34mKernel build complete.\e[0m";;
-    all)
+    all|both)
       echo -e "\e[34mStarting RootFS Build.\e[0m"
       $rootfsbuild
       echo -e "\e[34mRootFS build complete.\e[0m"
@@ -282,7 +282,8 @@ while getopts "b:v:t:o:dkh" flag; do
       echo -e  "flounder         \e[31m||\e[0m Nexus 9 Wifi"
       echo -e  "bacon            \e[31m||\e[0m OnePlus One"
       echo -e -n "\e[31m###\e[37m Build Types \e[0m"; for ((n=0;n<($columns-16);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-      echo -e  "all              \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -a arguments)"
+      echo -e  "all              \e[31m||\e[0m Builds rootfs and kernels for all devices"
+      echo -e  "both             \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -a arguments)"
       echo -e  "kernel           \e[31m||\e[0m Builds just a kernel (Requires -t and -a arguments)"
       echo -e  "rootfs           \e[31m||\e[0m Builds Nethunter RootFS"
       echo -e -n "\e[31m###\e[37m Versions \e[0m"; for ((n=0;n<($columns-13);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo

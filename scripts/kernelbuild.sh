@@ -117,5 +117,21 @@ nhb_zip_kernel(){
 }
 
 
-nhb_${device}_${androidversion}
-nhb_zip_kernel
+if [[ $buildtype == "all" ]]; then
+  androidversion="lollipop"
+  for device in bacon flodeb flounder hammerhead manta shamu; do
+    nhb_${device}_${androidversion}
+    nhb_zip_kernel
+    nhb_output
+  done
+  androidversion="kitkat"
+  for device in bacon flodeb groupertilapia hammerhead mako manta; do
+    nhb_${device}_${androidversion}
+    nhb_zip_kernel
+    nhb_output
+    echo "Building for $androidversion on $device"
+  done
+else
+  nhb_${device}_${androidversion}
+  nhb_zip_kernel
+fi
