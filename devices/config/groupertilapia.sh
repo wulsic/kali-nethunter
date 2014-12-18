@@ -1,8 +1,8 @@
 #####################################################
 # Create Nexus 7 Grouper Kernel (4.4+)
 #####################################################
-f_nexus7_grouper_kernel(){
-	f_kernel_build_init
+nhb_groupertilapia_kitkat(){
+	nhb_kernel_build_setup
 
 	echo "Downloading Kernel"
 	# Kangaroo Kernel has y-cable support and kexec patch built in
@@ -18,7 +18,7 @@ f_nexus7_grouper_kernel(){
 	sleep 3
 	make kali_defconfig
 	# Attach kernel builder to updater-script
-	cp $basepwd/devices/updater-scripts/kitkat/groupertilapia $workingdir/flashkernel/META-INF/com/google/android/updater-script
+	cp $maindir/devices/updater-scripts/kitkat/groupertilapia $workingdir/flashkernel/META-INF/com/google/android/updater-script
 
-	f_kernel_build
+	nhb_kernel_build
 }

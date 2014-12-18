@@ -3,7 +3,7 @@ set -e
 
 
 nhb_kernel_build_setup(){
-  if [[ $device == "arm64" ]]; then
+  if [[ $devicearch == "arm64" ]]; then
     echo "Downloading Android Toolchain"
     if [[ -d $maindir/files/toolchains/aarch64-linux-android-4.9 ]]; then
       echo "Copying toolchain to rootfs"
