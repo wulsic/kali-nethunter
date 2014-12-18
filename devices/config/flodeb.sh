@@ -36,7 +36,7 @@ nhb_flodeb_kitkat(){
 	f_kernel_build
 }
 
-f_flodeb_lollipop(){
+nhb_flodeb_lollipop(){
 	echo "Downloading Android Toolchain"
 	if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
 		echo "Copying toolchain to rootfs"
