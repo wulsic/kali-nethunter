@@ -69,7 +69,7 @@ nhb_flodeb_lollipop(){
 	sleep 10
 	make kali_defconfig
 	# Attach kernel builder to updater-script
-	cp $maindir/devices/updater-scripts/lollipop/flo-deb $workingdir/flashkernel/META-INF/com/google/android/updater-script
+	cp $maindir/devices/updater-scripts/lollipop/flodeb $workingdir/flashkernel/META-INF/com/google/android/updater-script
 	# Start kernel build
 
 	nhb_kernel_build
