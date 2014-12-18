@@ -1,20 +1,5 @@
 nhb_flodeb_kitkat(){
-	echo "Downloading Android Toolchain"
-	if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
-		echo "Copying toolchain to rootfs"
-		cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
-	else
-		git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 $maindir/files/toolchains/arm-eabi-4.7
-		cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
-	fi
-
-	echo "Setting export paths"
-	# Set path for Kernel building
-	export ARCH=arm
-	export SUBARCH=arm
-	export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
-
-	nhb_kernel_build_init
+	nhb_kernel_build_setup
 
 	echo "Downloading Kernel"
 	cd $workingdir
@@ -37,22 +22,7 @@ nhb_flodeb_kitkat(){
 }
 
 nhb_flodeb_lollipop(){
-	echo "Downloading Android Toolchain"
-	if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
-		echo "Copying toolchain to rootfs"
-		cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
-	else
-		git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 $maindir/files/toolchains/arm-eabi-4.7
-		cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
-	fi
-
-	echo "Setting export paths"
-	# Set path for Kernel building
-	export ARCH=arm
-	export SUBARCH=arm
-	export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
-
-	nhb_kernel_build_init
+	nhb_kernel_build_setup
 
 	echo "Downloading Kernel"
 	cd $workingdir

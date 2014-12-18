@@ -189,8 +189,8 @@ nhb_output(){
     mkdir -p $outputdir/RootFS
     mv NetHunter-$date.zip $outputdir/RootFS/NetHunter-$date.zip
     mv NetHunter-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
-    echo -e "\e[34mNetHunter is now located at $outputdir/RootFS/NetHunter-$date.zip\e[0m"
-    echo -e "\e[34mNetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
+    echo -e "\e[34mNetHunter is now located at \e[31m$outputdir/RootFS/NetHunter-$date.zip\e[0m"
+    echo -e "\e[34mNetHunter's SHA1 sum located at \e[31m$outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
   fi
   if [[ -a $workingdir/Kernel-$device-$androidversion-$date.zip ]]&&[[ -a $workingdir/Kernel-$device-$androidversion-$date.sha1sum ]]; then
     echo -e "\e[34mMoving kernel and SHA1 sum from working directory to output directory.\e[0m"
@@ -198,8 +198,8 @@ nhb_output(){
     mkdir -p $outputdir/Kernels/$device
     mv $workingdir/Kernel-$device-$androidversion-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
     mv $workingdir/Kernel-$device-$androidversion-$date.sha1sum $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum
-    echo -e "\e[34mKernel is located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip\e[0m"
-    echo -e "\e[34mKernel's SHA1 sum located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum\e[0m"
+    echo -e "\e[34mKernel is located at \e[31m$outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip\e[0m"
+    echo -e "\e[34mKernel's SHA1 sum located at \e[31m$outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum\e[0m"
   fi
   rm -rf $workingdir
 }
@@ -229,14 +229,14 @@ while getopts "b:v:t:o:dkh" flag; do
       esac;;
     t)
       case $OPTARG in
-        manta) device="manta";;
-        grouper|tilapia|groupertilapia|tilapiagrouper) device="groupertilapia";;
-        flo|deb|flodeb|debflo) device="flodeb";;
-        mako) device="mako";;
-        hammerhead) device="hammerhead";;
-        shamu) device="shamu";;
-        flounder) device="flounder";;
-        bacon) device="bacon";;
+        manta) device="manta"; devicearch="arm32";;
+        grouper|tilapia|groupertilapia|tilapiagrouper) device="groupertilapia"; devicearch="arm32";;
+        flo|deb|flodeb|debflo) device="flodeb"; devicearch="arm32";;
+        mako) device="mako"; devicearch="arm32";;
+        hammerhead) device="hammerhead"; devicearch="arm32";;
+        shamu) device="shamu"; devicearch="arm32";;
+        flounder) device="flounder"; devicearch="arm64";;
+        bacon) device="bacon"; devicearch="arm32";;
         *) echo -e "\e[34mInvalid device selected: $OPTARG\e[0m"; exit;;
       esac;;
     o)

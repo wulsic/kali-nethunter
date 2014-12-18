@@ -1,7 +1,39 @@
 #!/bin/bash
 set -e
 
-nhb_kernel_build_init(){
+
+nhb_kernel_build_setup(){
+  if [[ $device == "arm64" ]]; then
+    echo "Downloading Android Toolchain"
+    if [[ -d $maindir/files/toolchains/aarch64-linux-android-4.9 ]]; then
+      echo "Copying toolchain to rootfs"
+      cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
+    else
+      git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b lollipop-release $maindir/files/toolchains/aarch64-linux-android-4.9
+      cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
+    fi
+
+    echo "Setting export paths"
+    # Set path for Kernel building
+    export ARCH=arm64
+    export SUBARCH=arm
+    export CROSS_COMPILE=$workingdir/toolchain/bin/aarch64-linux-android-
+  else
+    echo "Downloading Android Toolchian"
+    if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
+      echo "Copying toolchain to rootfs"
+      cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
+    else
+      git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 $maindir/files/toolchains/arm-eabi-4.7
+      cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
+    fi
+
+    echo "Setting export paths"
+    # Set path for Kernel building
+    export ARCH=arm
+    export SUBARCH=arm
+    export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
+  fi
   cp -rf $maindir/files/flash/ $workingdir/flashkernel
   mkdir -p $workingdir/flashkernel/system/lib/modules
   rm -rf $workingdir/flashkernel/data
