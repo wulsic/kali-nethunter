@@ -259,9 +259,10 @@ while getopts "b:v:t:o:dkh" flag; do
       keepfiles=1;;
     h)
       clear
-      echo -e "\e[34m##################################\e[37m NetHunter Help Menu \e[31m###################################\e[0m"
-      echo -e "\e[34m#######\e[37m e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/build \e[31m###########\e[0m"
-      echo -e "\e[34m###\e[37m Options \e[31m##############################################################################\e[0m"
+      export columns=$(tput cols)
+      echo -e "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-24);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+      echo -e -n "\e[31m###\e[37m e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/build \e[0m"; for ((n=0;n<($columns-75);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+      echo -e -n "\e[31m###\e[37m Options "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "-h               \e[31m||\e[0m This help menu"
       echo -e  "-b [type]        \e[31m||\e[0m Build type"
       echo -e  "-t [device]      \e[31m||\e[0m Android device to build for (Kernel buids only)"
@@ -269,7 +270,7 @@ while getopts "b:v:t:o:dkh" flag; do
       echo -e  "-o [directory]   \e[31m||\e[0m Where the files are output (Defaults to ~/NetHunter-Builds)"
       echo -e  "-k               \e[31m||\e[0m Keep previously downloaded files (If they exist)"
       echo -e  "-d               \e[31m||\e[0m Turn debug mode on"
-      echo -e "\e[34m###\e[37m Devices \e[31m##############################################################################\e[0m"
+      echo -e -n "\e[31m###\e[37m Devices "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "manta            \e[31m||\e[0m Nexus 10"
       echo -e  "grouper          \e[31m||\e[0m Nexus 7 (2012) Wifi"
       echo -e  "tilapia          \e[31m||\e[0m Nexus 7 (2012) 3G"
@@ -280,14 +281,14 @@ while getopts "b:v:t:o:dkh" flag; do
       echo -e  "shamu            \e[31m||\e[0m Nexus 6"
       echo -e  "flounder         \e[31m||\e[0m Nexus 9 Wifi"
       echo -e  "bacon            \e[31m||\e[0m OnePlus One"
-      echo -e "\e[34m###\e[37m Build Types \e[31m##########################################################################\e[0m"
+      echo -e -n "\e[31m###\e[37m Build Types \e[0m"; for ((n=0;n<($columns-16);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "all              \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -a arguments)"
       echo -e  "kernel           \e[31m||\e[0m Builds just a kernel (Requires -t and -a arguments)"
       echo -e  "rootfs           \e[31m||\e[0m Builds Nethunter RootFS"
-      echo -e "\e[34m###\e[37m Versions \e[31m#############################################################################\e[0m"
+      echo -e -n "\e[31m###\e[37m Versions \e[0m"; for ((n=0;n<($columns-13);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "lollipop         \e[31m||\e[0m Android 5.0 Lollipop"
       echo -e  "kitkat           \e[31m||\e[0m Android 4.4.2 - 4.4.4 KitKat"
-      echo -e "\e[34m##########################################################################################\e[0m"
+      for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       exit;;
   esac
 done
