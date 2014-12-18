@@ -13,9 +13,9 @@ nhb_setup(){
 }
 
 nhb_stage1(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  FIRST STAGE CHROOT  \e[31m#################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  FIRST STAGE CHROOT  "; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   echo -e "\e[34mCreating Kali chroot.\e[0m"
   debootstrap --foreign --arch $architecture kali $kalirootfs http://http.kali.org/kali
@@ -23,9 +23,9 @@ nhb_stage1(){
 }
 
 nhb_stage2(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  SECOND STAGE CHROOT  \e[31m################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  SECOND STAGE CHROOT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   echo -e "\e[34mFinish configuring chroot.\e[0m"
   LANG=C chroot $kalirootfs /debootstrap/debootstrap --second-stage
@@ -57,9 +57,9 @@ nhb_stage2(){
 }
 
 nhb_stage3(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  THIRD STAGE CHROOT  \e[31m#################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  THIRD STAGE CHROOT  "; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   ### Packages to install to chroot
   arm="abootimg cgpt fake-hwclock ntpdate vboot-utils vboot-kernel-utils uboot-mkimage"
@@ -119,9 +119,9 @@ nhb_stage3(){
 }
 
 nhb_stage4(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  FOURTH STAGE CHROOT  \e[31m################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   echo -e "\e[34mModify Kismet files.\e[0m"
   ### Modify kismet configuration to work with gpsd and socat
@@ -219,9 +219,9 @@ nhb_stage4(){
 }
 
 nhb_clean(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  CLEAN UP CHROOT  \e[31m####################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  CLEAN UP CHROOT  "; for ((n=0;n<($columns-22);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   echo -e "\e[34mRunning clean-up script.\e[0m"
   ### Run clean-up script
@@ -238,9 +238,9 @@ nhb_clean(){
 }
 
 nhb_zip(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  CREATING ZIP  \e[31m#######################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   echo -e "\e[34mCopying premade flashable directory.\e[0m"
   ### Create base flashable zip

@@ -64,9 +64,10 @@ nhb_check(){
 
 ### Sets up variables and dependencies
 nhb_setup(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  SETTING UP  \e[31m#########################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  SETTING UP  "; for ((n=0;n<($columns-17);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   ### Sets up variables used throughout the script
   echo -e "\e[34mSetting variables.\e[0m"
@@ -177,9 +178,9 @@ nhb_build(){
 
 ### Moves built files to output directory
 nhb_output(){
-  echo -e "\e[31m##########################################################################################\e[0m"
-  echo -e "\e[31m###\e[0m  MOVING TO OUTPUT  \e[31m###################################################################\e[0m"
-  echo -e "\e[31m##########################################################################################\e[0m"
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
+  echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-23);n++)); do echo -e -n "\e[31m#\e[0m"; done
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done
 
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
     echo -e "\e[34mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
@@ -202,10 +203,6 @@ nhb_output(){
   rm -rf $workingdir
 }
 
-
-### Set window size and clear
-printf '\033[8;40;90t'
-clear
 
 ### Defaults for script
 outputdir=~/NetHunter-Builds
