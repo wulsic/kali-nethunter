@@ -132,8 +132,8 @@ nhb_stage4(){
   echo "Copying Mana files."
   ### Copy over our kali specific mana config files
   cp -rf $maindir/files/bin/mana/start-mana* $kairootfs/usr/bin/
-  cp -rf $maindir/files/bin/mana/stop-mana $kalirootfs/kali-$architecture/usr/bin/
-  cp -rf $maindir/files/bin/mana/*.sh $kalirootfs/kali-$architecture/usr/share/mana-toolkit/run-mana/
+  cp -rf $maindir/files/bin/mana/stop-mana $kalirootfs/usr/bin/
+  cp -rf $maindir/files/bin/mana/*.sh $kalirootfs/usr/share/mana-toolkit/run-mana/
   dos2unix $kalirootfs/usr/share/mana-toolkit/run-mana/*
   dos2unix $kalirootfs/etc/mana-toolkit/*
   chmod 755 $kalirootfs/usr/share/mana-toolkit/run-mana/*
