@@ -5,7 +5,7 @@ nhb_setup(){
   ###################
   ### BUILD SETUP ###
   ###################
-  echo "Deleting existing RootFS."
+  echo -e "\e[31mDeleting existing RootFS.\e[0m"
   rm -rf $kalirootfs/*
   unset CROSS_COMPILE
   # Set working folder to rootfs
