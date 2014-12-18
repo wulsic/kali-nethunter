@@ -73,7 +73,7 @@ nhb_setup(){
   export date=$(date +%m%d%Y)
   export architecture="armhf"
   export maindir=~/NetHunter
-  export workingdir=$maindir/working-directory-$date
+  export workingdir=$maindir/working-directory
   export rootfsdir=$maindir/rootfs
   export kalirootfs=$rootfsdir/kali-$architecture
   export boottools=$maindir/files/bin/boottools
@@ -190,7 +190,7 @@ nhb_output(){
     echo -e "\e[34mNetHunter is now located at $outputdir/RootFS/NetHunter-$date.zip\e[0m"
     echo -e "\e[34mNetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
   fi
-  if [[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.zip ]]&&[[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.sha1sum ]]; then
+  if [[ -a $workingdir/Kernel-$device-$androidversion-$date.zip ]]&&[[ -a $workingdir/Kernel-$device-$androidversion-$date.sha1sum ]]; then
     echo -e "\e[34mMoving kernel and SHA1 sum from working directory to output directory.\e[0m"
     cd $workingdir
     mkdir -p $outputdir/Kernels/$device

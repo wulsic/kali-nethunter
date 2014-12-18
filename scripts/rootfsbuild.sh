@@ -183,16 +183,12 @@ nhb_stage4(){
 
   echo -e "\e[34mInstalling deADBolt.\e[0m"
   ### Installs deADBolt
-  curl -o deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
-  cp ./deadbolt $kalirootfs/usr/bin/deadbolt
-  rm -rf deadbolt
+  curl -o $kalirootfs/usr/bin/deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/deadbolt
 
   echo -e "\e[34mInstalling APFucker.py.\e[0m"
   ### Installs APFucker.py
-  curl -o apfucker.py https://raw.githubusercontent.com/mattoufoutu/scripts/master/AP-Fucker.py
-  cp ./apfucker.py $kalirootfs/usr/bin/apfucker.py
-  rm -rf deadbolt
+  curl -o $kalirootfs/usr/bin/apfucker.py https://raw.githubusercontent.com/mattoufoutu/scripts/master/AP-Fucker.py
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/apfucker.py
 
   echo -e "\e[34mInstalling HID attack script.\e[0m"
@@ -276,15 +272,12 @@ nhb_zip(){
 
   ### Compress filesystem and add to zip
   cd $kalirootfs
-  echo -e "\e[34mCompressing kali rootfs, please wait.\e[0m"
-  tar jcf kalifs.tar.bz2 $kalirootfs
-  echo -e "\e[34mMoving Kalis rootfs to zip directory.\e[0m"
-  mv kalifs.tar.bz2 $workingdir/flash/data/local/
-  #tar jcvf $workingdir/flash/data/local/kalifs.tar.bz2 $workingdir/$kalirootfs
+  echo -e "\e[34mCompressing kali rootfs into working directory. Please wait.\e[0m"
+  tar jcf $workingdir/flash/data/local/kalifs.tar.bz2 $kalirootfs
   echo -e "\e[34mStructure for flashable zip file is complete.\e[0m"
 
   echo -e "\e[34mCreating flashable zip.\e[0m"
-  cd $workingdir/files/flash/
+  cd $workingdir/flash/
   zip -r6 NetHunter-$date.zip *
   mv NetHunter-$date.zip $workingdir
   cd $workingdir
