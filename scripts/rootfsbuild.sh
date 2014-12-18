@@ -13,7 +13,8 @@ nhb_setup(){
 }
 
 nhb_stage1(){
-  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo 
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  FIRST STAGE CHROOT  "; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
@@ -23,6 +24,7 @@ nhb_stage1(){
 }
 
 nhb_stage2(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  SECOND STAGE CHROOT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -57,6 +59,7 @@ nhb_stage2(){
 }
 
 nhb_stage3(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  THIRD STAGE CHROOT  "; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -119,6 +122,7 @@ nhb_stage3(){
 }
 
 nhb_stage4(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -219,6 +223,7 @@ nhb_stage4(){
 }
 
 nhb_clean(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  CLEAN UP CHROOT  "; for ((n=0;n<($columns-22);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -238,6 +243,7 @@ nhb_clean(){
 }
 
 nhb_zip(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo

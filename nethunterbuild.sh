@@ -178,6 +178,7 @@ nhb_build(){
 
 ### Moves built files to output directory
 nhb_output(){
+  export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-23);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -186,8 +187,8 @@ nhb_output(){
     echo -e "\e[34mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
     cd $workingdir
     mkdir -p $outputdir/RootFS
-    mv update-kali-$date.zip $outputdir/RootFS/NetHunter-$date.zip
-    mv update-kali-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
+    mv NetHunter-$date.zip $outputdir/RootFS/NetHunter-$date.zip
+    mv NetHunter-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
     echo -e "\e[34mNetHunter is now located at $outputdir/RootFS/NetHunter-$date.zip\e[0m"
     echo -e "\e[34mNetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
   fi
