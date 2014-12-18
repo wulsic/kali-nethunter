@@ -1,4 +1,4 @@
-nhb_nexus9_lollipop(){
+nhb_flounder_lollipop(){
 	echo "Downloading Android Toolchain"
 	if [[ -d $maindir/files/toolchains/toolchain64 ]]; then
 		echo "Copying toolchain to rootfs"

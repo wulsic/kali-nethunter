@@ -35,7 +35,7 @@ nhb_kernel_build(){
     else
       if [ -f "$workingdir/kernel/arch/arm/boot/zImage" ]; then
         cp $workingdir/kernel/arch/arm/boot/zImage $workingdir/flash/kernel/kernel
-        echo "zImage found at ${basedir}/kernel/arch/arm/boot/zImage"
+        echo "zImage found at $workingdir/kernel/arch/arm/boot/zImage"
       fi
     fi
     cp $workingdir/flashkernel/system/lib/modules/* $workingdir/flash/system/lib/modules
@@ -45,8 +45,8 @@ nhb_kernel_build(){
 
   # Copy kernel to flashable package, prefer zImage-dtb. Image.gz-dtb appears to be for 64bit kernels for now
   if [ -f "$workingdir/kernel/arch/arm/boot/zImage-dtb" ]; then
-    cp ${basedir}/kernel/arch/arm/boot/zImage-dtb ${basedir}/flashkernel/kernel/kernel
-    echo "zImage-dtb found at ${basedir}/kernel/arch/arm/boot/zImage-dtb"
+    cp $workingdir/kernel/arch/arm/boot/zImage-dtb $workingdir/flashkernel/kernel/kernel
+    echo "zImage-dtb found at $workingdir/kernel/arch/arm/boot/zImage-dtb"
   else
     if [ -f "$workingdir/kernel/arch/arm/boot/zImage" ]; then
       cp $workingdir/kernel/arch/arm/boot/zImage $workingdir/flashkernel/kernel/kernel
@@ -74,14 +74,13 @@ nhb_kernel_build(){
 
 nhb_zip_kernel(){
   apt-get install -y zip
-  d_clear
   cd $workingdir/flashkernel/
   zip -r6 Kernel-$device-$androidversion-$date.zip *
-  mv Kernel-$device-$androidversion-$date.zip ${basedir}
-  cd ${basedir}
+  mv Kernel-$device-$androidversion-$date.zip $workingdir
+  cd $workingdir
   # Generate sha1sum
   echo "Generating sha1sum for Kernel-$device-$androidversion-$date.zip"
-  sha1sum Kernel-$device-$androidversion-$date.zip > ${basedir}/Kernel-$device-$androidversion-$date.sha1sum
+  sha1sum Kernel-$device-$androidversion-$date.zip > $workingdir/Kernel-$device-$androidversion-$date.sha1sum
   sleep 5
 }
 
