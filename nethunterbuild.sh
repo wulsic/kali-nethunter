@@ -6,15 +6,15 @@ nhb_check(){
   ### Checks to see if host machine is running 64 bit Kali
   hostarch=`uname -m`
   if [ $hostarch == "Darwin" ]; then
-    echo "OS X isn't supported"
+    echo -e "\e[31mOS X isn't supported.\e[0m"
     exit
   else
     testkali=$(cat /etc/*-release | grep "ID=kali")
   fi
   if [[ $testkali == "ID=kali"* && ( $hostarch == "x86_64" || $hostarch == "amd64" ) ]]; then
-    echo "64 bit Kali Linux detected"
+    echo -e "\e[31m64 bit Kali Linux detected.\e[0m"
   else
-    echo "This utility is only compatible with 64 bit Kali Linux."
+    echo -e "\e[31mThis utility is only compatible with 64 bit Kali Linux.\e[0m"
     exit
   fi
 
@@ -22,36 +22,36 @@ nhb_check(){
   ### Checks to see if input matches script's abilities
   ### If nothing is selectd, display error and exit immediately
   if [[ $buildtype == "" ]]&&[[ $androidversion == "" ]]&&[[ $device == "" ]]; then
-    echo "You must specify arguments in order for the script to work."
-    echo "Use the argument -h to see what arguments are needed."
+    echo -e "\e[31mYou must specify arguments in order for the script to work.\e[0m"
+    echo -e "\e[31mUse the argument -h to see what arguments are needed.\e[0m"
     exit
   fi
   ### If build type is blank, display error and set $error var to 1
   if [[ $buildtype == "" ]]; then
-    echo "The build cannot continue because a build type was not specified."
+    echo -e "\e[31mThe build cannot continue because a build type was not specified.\e[0m"
     error=1
   fi
   ### If Kernel build is selected, but no device specified, display error and set $error var to 1
   if [[ $device == "" ]]&&[[ $buildtype == "kernel" ]]; then
-    echo "The build cannot continue because a device was not specified."
+    echo -e "\e[31mThe build cannot continue because a device was not specified.\e[0m"
     error=1
   fi
   ### If Kernel build is selected but no android version selected, display error and set $error var to 1
   if [[ $androidversion == "" ]]&&[[ $buildtype == "kernel" ]]; then
-    echo "The build cannot continue because an Android version was not specified."
+    echo -e "\e[31mThe build cannot continue because an Android version was not specified.\e[0m"
     error=1
   fi
   ### If Lollipop kernel is selected for an unsupported device, display error and set $error var to 1
   if [[ $buildtype == "kernel" ]]&&[[ $androidversion == "lollipop" ]]; then
     if [[ $device == "manta" ]]||[[ $device == "groupertilapia" ]]||[[ $device == "mako" ]]||[[ $device == "gs5" ]]||[[ $device == "gs4" ]]; then
-      echo "Lollipop isn't currently supported on your device."
+      echo -e "\e[31mLollipop isn't currently supported on your device.\e[0m"
       error=1
     fi
   fi
   ### If KitKat kernel is selected for an unsupported device, display error and set $error var to 1
   if [[ $buildtype == "kernel" ]]&&[[ $androidversion == "kitkat" ]]; then
     if [[ $device == "shamu" ]]||[[ $device == "flounder" ]]; then
-      echo "KitKat isn't supported on your device."
+      echo -e "\e[31mKitKat isn't supported on your device.\e[0m"
       error=1
     fi
   fi
@@ -65,7 +65,7 @@ nhb_check(){
 ### Sets up variables and dependencies
 nhb_setup(){
   ### Sets up variables used throughout the script
-  echo "Setting variables."
+  echo -e "\e[31mSetting variables.\e[0m"
   export date=$(date +%m%d%Y)
   export architecture="armhf"
   export maindir=~/NetHunter
@@ -77,28 +77,28 @@ nhb_setup(){
   export rootfsbuild="source $maindir/scripts/rootfsbuild.sh"
   export kernelbuild="source $maindir/scripts/kernelbuild.sh"
 
-  echo "Checking for previous installation."
+  echo -e "\e[31mChecking for previous installation.\e[0m"
   ### Checks for existing build directory exists
   if [ -d $maindir ]; then
-    echo "Previous install found."
+    echo -e "\e[31mPrevious install found.\e[0m"
     cd $maindir
   else
-    echo "NetHunter build directory not found. Downloading required files..."
-    echo "Cloning NetHunter files to $maindir."
+    echo -e "\e[31mNetHunter build directory not found. Downloading required files...\e[0m"
+    echo -e "\e[31mCloning NetHunter files to $maindir.\e[0m"
     git clone -b nethunterbuild https://github.com/offensive-security/kali-nethunter $maindir
     mkdir -p $maindir/rootfs
     ### Make Directories and Prepare to build
-    echo "Cloning toolchain to $toolchaindir/gcc-arm-linux-gnueabihf-4.7."
+    echo -e "\e[31mCloning toolchain to $toolchaindir/gcc-arm-linux-gnueabihf-4.7.\e[0m"
     git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
     export PATH=${PATH}:$toolchaindir/gcc-arm-linux-gnueabihf-4.7/bin
     ### Build Dependencies for script
-    echo "Updating sources."
+    echo -e "\e[31mUpdating sources.\e[0m"
     apt-get update
-    echo "Installing dependencies needed to build NetHunter."
+    echo -e "\e[31mInstalling dependencies needed to build NetHunter.\e[0m"
     apt-get install -y git-core gnupg flex bison gperf libesd0-dev build-essential zip curl libncurses5-dev zlib1g-dev libncurses5-dev gcc-multilib g++-multilib \
     parted kpartx debootstrap pixz qemu-user-static abootimg cgpt vboot-kernel-utils vboot-utils uboot-mkimage bc lzma lzop automake autoconf m4 dosfstools pixz rsync \
     schedtool git dosfstools e2fsprogs device-tree-compiler ccache dos2unix zip
-    echo "determining host architecture."
+    echo -e "\e[31mdetermining host architecture.\e[0m"
     MACHINE_TYPE=`uname -m`
     if [ ${MACHINE_TYPE} == 'x86_64' ]; then
       dpkg --add-architecture i386
@@ -109,23 +109,23 @@ nhb_setup(){
     else
       apt-get install -y libncurses5
     fi
-    echo "Checking for /usr/bin/lz4c."
+    echo -e "\e[31mChecking for /usr/bin/lz4c.\e[0m"
     if [ ! -e "/usr/bin/lz4c" ]; then
-      echo "Missing lz4c which is needed to build certain kernels.  Downloading and making for system:"
+      echo -e "\e[31mDownloading and making lz4c for system:\e[0m"
       cd $maindir
       wget http://lz4.googlecode.com/files/lz4-r112.tar.gz
       tar -xf lz4-r112.tar.gz
       cd lz4-r112
       make
       make install
-      echo "lz4c now installed.  Removing leftover files."
+      echo -e "\e[31mlz4c now installed. Removing leftover files.\e[0m"
       cd ..
       rm -rf lz4-r112.tar.gz lz4-r112
     fi
     cd $maindir
   fi
 
-  echo "Processing kernel build scripts."
+  echo -e "\e[31mProcessing kernel build scripts.\e[0m"
   ### Reads sub-scripts for various functions for kernel building
   source $maindir/devices/config/shamu.sh
   source $maindir/devices/config/flounder.sh
@@ -136,16 +136,16 @@ nhb_setup(){
   source $maindir/devices/config/mako.sh
   source $maindir/devices/config/bacon.sh
 
-  echo "Checking NetHunter directory for any updated files."
+  echo -e "\e[31mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
   cd $maindir
   for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
   cd $maindir
   if [ -d "$workingdir" ]; then
-    echo "Delete previous working directory."
+    echo -e "\e[31mDelete previous working directory.\e[0m"
     rm -rf $workingdir
   fi
-  echo "Creating working directory."
+  echo -e "\e[31mCreating working directory.\e[0m"
   mkdir -p $workingdir
   cd $workingdir
 }
@@ -154,42 +154,42 @@ nhb_setup(){
 nhb_build(){
   case $buildtype in
     rootfs)
-      echo "Starting RootFS build."
+      echo -e "\e[31mStarting RootFS build.\e[0m"
       $rootfsbuild
-      echo "RootFS build complete.";;
+      echo -e "\e[31mRootFS build complete.\e[0m";;
     kernel)
-      echo "Starting kernel build."
+      echo -e "\e[31mStarting kernel build.\e[0m"
       $kernelbuild
-      echo "Kernel build complete.";;
+      echo -e "\e[31mKernel build complete.\e[0m";;
     all)
-      echo "Starting RootFS Build."
+      echo -e "\e[31mStarting RootFS Build.\e[0m"
       $rootfsbuild
-      echo "RootFS build complete."
-      echo "Starting Kernel build."
+      echo -e "\e[31mRootFS build complete.\e[0m"
+      echo -e "\e[31mStarting Kernel build.\e[0m"
       $kernelbuild
-      echo "Kernel build complete.";;
+      echo -e "\e[31mKernel build complete.\e[0m";;
   esac
 }
 
 ### Moves built files to output directory
 nhb_output(){
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
-    echo "Moving NetHunter RootFS and SHA1 sum from working directory to output directory."
+    echo -e "\e[31mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
     cd $workingdir
     mkdir -p $outputdir/RootFS
     mv update-kali-$date.zip $outputdir/RootFS/NetHunter-$date.zip
     mv update-kali-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
-    echo "NetHunter is now located at $outputdir/RootFS/NetHunter-$date.zip"
-    echo "NetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum"
+    echo -e "\e[31mNetHunter is now located at $outputdir/RootFS/NetHunter-$date.zip\e[0m"
+    echo -e "\e[31mNetHunter's SHA1 sum located at $outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
   fi
   if [[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.zip ]]&&[[ -a $workingdir/Kernel-$selecteddevice-$targetver-$builddate.sha1sum ]]; then
-    echo "Moving kernel and SHA1 sum from working directory to output directory."
+    echo -e "\e[31mMoving kernel and SHA1 sum from working directory to output directory.\e[0m"
     cd $workingdir
     mkdir -p $outputdir/Kernels/$device
     mv kernel-kali-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
     mv kernel-kali-$date.sha1sum $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum
-    echo "Kernel is located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip"
-    echo "Kernel's SHA1 sum located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum"
+    echo -e "\e[31mKernel is located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip\e[0m"
+    echo -e "\e[31mKernel's SHA1 sum located at $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum\e[0m"
   fi
   rm -rf $workingdir
 }
@@ -213,13 +213,13 @@ while getopts "b:v:t:o:dkh" flag; do
         buildtype="rootfs";;
         all)
         buildtype="all";;
-        *) echo "Invalid build type: $OPTARG"; exit;;
+        *) echo -e "\e[31mInvalid build type: $OPTARG\e[0m"; exit;;
       esac;;
     v)
       case $OPTARG in
         lollipop|Lollipop) androidversion=lollipop;;
         kitkat|KitKat) androidversion=kitkat;;
-        *) echo "Invalid Android version selected: $OPTARG"; exit;;
+        *) echo -e "\e[31mInvalid Android version selected: $OPTARG\e[0m"; exit;;
       esac;;
     t)
       case $OPTARG in
@@ -231,7 +231,7 @@ while getopts "b:v:t:o:dkh" flag; do
         shamu) device="shamu";;
         flounder) device="flounder";;
         bacon) device="bacon";;
-        *) echo "Invalid device selected: $OPTARG"; exit;;
+        *) echo -e "\e[31mInvalid device selected: $OPTARG\e[0m"; exit;;
       esac;;
     o)
       outputdir=$OPTARG
@@ -242,19 +242,19 @@ while getopts "b:v:t:o:dkh" flag; do
         if [ -d "$outputdir" ]; then
           sleep 0
         else
-          echo "There was an error creating the directory. Make sure it is correct before continuing."
+          echo -e "\e[31mThere was an error creating the directory. Make sure it is correct before continuing.\e[0m"
           exit
         fi
       fi;;
     d)
-      echo "Debugging mode: On"
+      echo -e "\e[31mDebugging mode: On\e[0m"
       DEBUG=1;;
     k)
       keepfiles=1;;
     h)
       clear
       echo -e "\e[31m##################################\e[37m NetHunter Help Menu \e[31m###################################\e[0m"
-      echo -e "\e[31m###e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/newbuild                       ###\e[0m"
+      echo -e "\e[31m#######\e[37m e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/build \e[31m###########\e[0m"
       echo -e "\e[31m###\e[37m Options \e[31m##############################################################################\e[0m"
       echo -e  "-h               \e[31m||\e[0m This help menu"
       echo -e  "-b [type]        \e[31m||\e[0m Build type"
