@@ -14,7 +14,7 @@ nhb_flodeb_kitkat(){
 	export SUBARCH=arm
 	export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
 
-	f_kernel_build_init
+	nhb_kernel_build_init
 
 	echo "Downloading Kernel"
 	cd $workingdir
@@ -33,7 +33,7 @@ nhb_flodeb_kitkat(){
 	cp $maindir/devices/updater-scripts/kitkat/flodeb $workingdir/flashkernel/META-INF/com/google/android/updater-script
 	# Start kernel build
 
-	f_kernel_build
+	nhb_kernel_build
 }
 
 nhb_flodeb_lollipop(){
@@ -52,7 +52,7 @@ nhb_flodeb_lollipop(){
 	export SUBARCH=arm
 	export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
 
-	f_kernel_build_init
+	nhb_kernel_build_init
 
 	echo "Downloading Kernel"
 	cd $workingdir
@@ -72,5 +72,5 @@ nhb_flodeb_lollipop(){
 	cp $maindir/devices/updater-scripts/lollipop/flo-deb $workingdir/flashkernel/META-INF/com/google/android/updater-script
 	# Start kernel build
 
-	f_kernel_build
+	nhb_kernel_build
 }
