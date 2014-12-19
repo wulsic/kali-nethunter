@@ -26,12 +26,12 @@ nhb_hammerhead_lollipop(){
 
 		cd $workingdir
 		echo "Downloading Kernel"
-		if [[ -d $maindir/devices/kernels/hammerhead-lollipop ]]; then
+		if [[ -d $maindir/kernel/devices/lollipop/hammerhead ]]; then
   		echo "Copying kernel to rootfs"
-  		cp -rf $maindir/devices/kernels/hammerhead-lollipop $workingdir/kernel
+  		cp -rf $maindir/kernel/devices/lollipop/hammerhead $workingdir/kernel
 		else
-  		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-hammerhead-3.4-lollipop-release $maindir/devices/kernels/hammerhead-lollipop
-			cp -rf $maindir/devices/kernels/hammerhead-lollipop $workingdir/kernel
+  		git clone https://github.com/binkybear/kernel_msm.git -b android-msm-hammerhead-3.4-lollipop-release $maindir/kernel/devices/lollipop/hammerhead
+			cp -rf $maindir/kernel/devices/lollipop/hammerhead $workingdir/kernel
 		fi
 		cd $workingdir/kernel
 		chmod +x scripts/*
