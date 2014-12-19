@@ -48,7 +48,7 @@ nhb_bacon_lollipop(){
 	sleep 10
 	make kali_defconfig
 	# Attach kernel builder to updater-script
-	cp $basepwd/devices/updater-scripts/lollipop/bacon $workingdir/flashkernel/META-INF/com/google/android/updater-script
+	cp $maindir/devices/updater-scripts/lollipop/bacon $workingdir/flashkernel/META-INF/com/google/android/updater-script
 	# Start kernel build
 
 	nhb_kernel_build

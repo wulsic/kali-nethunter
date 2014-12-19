@@ -124,7 +124,7 @@ nhb_stage3(){
 nhb_stage4(){
   export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-  echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  FOURTH STAGE CHROOT  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
   echo -e "\e[34mModify Kismet files.\e[0m"
