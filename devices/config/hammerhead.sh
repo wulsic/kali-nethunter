@@ -39,7 +39,7 @@ nhb_hammerhead_lollipop(){
 		sleep 10
 		make kali_defconfig
 		# Attach kernel builder to updater-script
-		cp $bmaindir/devices/updater-scripts/lollipop/hammerhead $workingdir/flashkernel/META-INF/com/google/android/updater-script
+		cp $maindir/devices/updater-scripts/lollipop/hammerhead $workingdir/flashkernel/META-INF/com/google/android/updater-script
 		f_kernel_build
 		cd $workingdir/flashkernel/kernel
 		abootimg --create $workingdir/flashkernel/boot.img -f $workingdir/kernel/ramdisk/5/bootimg.cfg -k $workingdir/kernel/arch/arm/boot/zImage-dtb -r $workingdir/kernel/ramdisk/5/initrd.img
