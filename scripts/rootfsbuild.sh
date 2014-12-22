@@ -256,7 +256,6 @@ nhb_zip(){
 
   echo -e "\e[34mInstalling extra applications for Android.\e[0m"
   ### Download/add Android applications that are useful to our chroot enviornment
-  rm $workingdir/flash/data/app/*
   ### Required: Terminal application is required
   wget -P $workingdir/flash/data/app/ http://jackpal.github.com/Android-Terminal-Emulator/downloads/Term.apk
   ### Suggested: BlueNMEA to enable GPS logging in Kismet
