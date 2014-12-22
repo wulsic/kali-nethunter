@@ -166,10 +166,18 @@ nhb_build(){
       echo -e "\e[34mStarting kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[34mKernel build complete.\e[0m";;
-    all|both)
+    both)
       echo -e "\e[34mStarting RootFS Build.\e[0m"
       $rootfsbuild
       echo -e "\e[34mRootFS build complete.\e[0m"
+      echo -e "\e[34mStarting Kernel build.\e[0m"
+      $kernelbuild
+      echo -e "\e[34mKernel build complete.\e[0m";;
+    all)
+      echo -e "\e[34mStarting RootFS Build.\e[0m"
+      $rootfsbuild
+      echo -e "\e[34mRootFS build complete.\e[0m"
+      nhb_output
       echo -e "\e[34mStarting Kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[34mKernel build complete.\e[0m";;
@@ -201,7 +209,7 @@ nhb_output(){
     echo -e "\e[34mKernel is located at \e[31m$outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip\e[0m"
     echo -e "\e[34mKernel's SHA1 sum located at \e[31m$outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum\e[0m"
   fi
-  rm -rf $workingdir
+  rm -rf $workingdir/*
 }
 
 

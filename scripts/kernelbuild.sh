@@ -3,32 +3,37 @@ set -e
 
 
 nhb_kernel_build_setup(){
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  SETTING UP  "; for ((n=0;n<($columns-17);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
   if [[ $devicearch == "arm64" ]]; then
-    echo "Downloading Android Toolchain"
+    echo "\e[34mDownloading Android Toolchain.\e[0m"
     if [[ -d $maindir/files/toolchains/aarch64-linux-android-4.9 ]]; then
-      echo "Copying toolchain to rootfs"
+      echo "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
     else
       git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b lollipop-release $maindir/files/toolchains/aarch64-linux-android-4.9
       cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
     fi
 
-    echo "Setting export paths"
+    echo "\e[34mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm64
     export SUBARCH=arm
     export CROSS_COMPILE=$workingdir/toolchain/bin/aarch64-linux-android-
   else
-    echo "Downloading Android Toolchian"
+    echo "\e[34mDownloading Android Toolchian.\e[0m"
     if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
-      echo "Copying toolchain to rootfs"
+      echo "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
     else
       git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 $maindir/files/toolchains/arm-eabi-4.7
       cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
     fi
 
-    echo "Setting export paths"
+    echo "\e[34mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm
     export SUBARCH=arm
@@ -43,31 +48,35 @@ nhb_kernel_build_setup(){
 }
 
 nhb_kernel_build(){
-  echo "Building Kernel"
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  BUILDING KERNEL  "; for ((n=0;n<($columns-22);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
   make -j $(grep -c processor /proc/cpuinfo)
 
   # Detect if module support is enabled in kernel and if so then build/copy.
   if grep -q CONFIG_MODULES=y .config
     then
-    echo "Building modules"
+    echo "\e[34mBuilding modules.\e[0m"
     mkdir -p modules
     make modules_install INSTALL_MOD_PATH=$workingdir/kernel/modules
-    echo "Copying Kernel and modules to flashable kernel folder"
+    echo "\e[34mCopying Kernel and modules to flashable kernel folder.\e[0m"
     find modules -name "*.ko" -exec cp -t ../flashkernel/system/lib/modules {} +
   else
-    echo "Module support is disabled."
+    echo "\e[34mModule support is disabled.\e[0m"
   fi
 
   # If this is not just a kernel build by itself it will copy modules and kernel to main flash (rootfs+kernel)
   if [ -d "$workingdir/flash/" ]; then
-    echo "Detected exsisting /flash folder, copying kernel and modules"
+    echo "\e[34mDetected exsisting /flash folder, copying kernel and modules.\e[0m"
     if [ -f "$workingdir/kernel/arch/arm/boot/zImage-dtb" ]; then
       cp $workingdir/kernel/arch/arm/boot/zImage-dtb $workingdir/flash/kernel/kernel
-      echo "zImage-dtb found at $workingdir/kernel/arch/arm/boot/zImage-dtb"
+      echo "\e[34mzImage-dtb found at $workingdir/kernel/arch/arm/boot/zImage-dtb.\e[0m"
     else
       if [ -f "$workingdir/kernel/arch/arm/boot/zImage" ]; then
         cp $workingdir/kernel/arch/arm/boot/zImage $workingdir/flash/kernel/kernel
-        echo "zImage found at $workingdir/kernel/arch/arm/boot/zImage"
+        echo "\e[34mzImage found at $workingdir/kernel/arch/arm/boot/zImage.\e[0m"
       fi
     fi
     cp $workingdir/flashkernel/system/lib/modules/* $workingdir/flash/system/lib/modules
@@ -78,40 +87,30 @@ nhb_kernel_build(){
   # Copy kernel to flashable package, prefer zImage-dtb. Image.gz-dtb appears to be for 64bit kernels for now
   if [ -f "$workingdir/kernel/arch/arm/boot/zImage-dtb" ]; then
     cp $workingdir/kernel/arch/arm/boot/zImage-dtb $workingdir/flashkernel/kernel/kernel
-    echo "zImage-dtb found at $workingdir/kernel/arch/arm/boot/zImage-dtb"
+    echo "\e[34mzImage-dtb found at $workingdir/kernel/arch/arm/boot/zImage-dtb.\e[0m"
   else
     if [ -f "$workingdir/kernel/arch/arm/boot/zImage" ]; then
       cp $workingdir/kernel/arch/arm/boot/zImage $workingdir/flashkernel/kernel/kernel
-      echo "zImage found at $workingdir/kernel/arch/arm/boot/zImage"
+      echo "\e[34mzImage found at $workingdir/kernel/arch/arm/boot/zImage.\e[0m"
     fi
   fi
 
   cd $workingdir
-
-  #Adding Kernel build
-  # 1. Will check if kernel was added to main flashable zip (one with rootfs).  If yes it will skip.
-  # 2. If it detects KERNEL_SCRIPT_START it will not add it to flashable zip (rootfs)
-  # 3. If the updater-script is not found it will assume this is a kernel only build so it will not try to add it
-
-  if [ -f "$workingdir/flash/META-INF/com/google/android/updater-script" ]; then
-    if grep -Fxq "#KERNEL_SCRIPT_START" "$workingdir/flash/META-INF/com/google/android/updater-script"
-      then
-      echo "Kernel already added to main updater-script"
-    else
-      echo "Adding Kernel install to updater-script in main update.zip"
-      cat $workingdir/flashkernel/META-INF/com/google/android/updater-script >> $workingdir/flash/META-INF/com/google/android/updater-script
-    fi
-  fi
 }
 
 nhb_zip_kernel(){
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
   apt-get install -y zip
   cd $workingdir/flashkernel/
   zip -r6 Kernel-$device-$androidversion-$date.zip *
   mv Kernel-$device-$androidversion-$date.zip $workingdir
   cd $workingdir
   # Generate sha1sum
-  echo "Generating sha1sum for Kernel-$device-$androidversion-$date.zip"
+  echo "\e[34mGenerating sha1sum for \e[31mKernel-$device-$androidversion-$date.zip.\e[0m"
   sha1sum Kernel-$device-$androidversion-$date.zip > $workingdir/Kernel-$device-$androidversion-$date.sha1sum
   sleep 5
 }
