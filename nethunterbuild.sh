@@ -237,14 +237,14 @@ while getopts "b:v:t:o:dkh" flag; do
       esac;;
     t)
       case $OPTARG in
-        manta) device="manta"; devicearch="arm32";;
-        grouper|tilapia|groupertilapia|tilapiagrouper) device="groupertilapia"; devicearch="arm32";;
-        flo|deb|flodeb|debflo) device="flodeb"; devicearch="arm32";;
-        mako) device="mako"; devicearch="arm32";;
-        hammerhead) device="hammerhead"; devicearch="arm32";;
-        shamu) device="shamu"; devicearch="arm32";;
-        flounder) device="flounder"; devicearch="arm64";;
-        bacon) device="bacon"; devicearch="arm32";;
+        manta) device="manta";;
+        grouper|tilapia|groupertilapia|tilapiagrouper) device="groupertilapia";;
+        flo|deb|flodeb|debflo) device="flodeb";;
+        mako) device="mako";;
+        hammerhead) device="hammerhead";;
+        shamu) device="shamu";;
+        flounder) device="flounder";;
+        bacon) device="bacon";;
         *) echo -e "\e[34mInvalid device selected: $OPTARG\e[0m"; exit;;
       esac;;
     o)

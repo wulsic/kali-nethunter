@@ -8,36 +8,46 @@ nhb_kernel_build_setup(){
   echo -e -n "\e[31m###\e[0m  SETTING UP  "; for ((n=0;n<($columns-17);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  if [[ $devicearch == "arm64" ]]; then
-    echo -e "\e[34mDownloading Android Toolchain.\e[0m"
+  if [[ $device == "flounder" ]]; then
+    echo -e "\e[34mChecking for 64-bit Android Toolchain.\e[0m"
     if [[ -d $maindir/files/toolchains/aarch64-linux-android-4.9 ]]; then
       echo -e "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
     else
+      echo -e "\e[34mDownloading 64-bit Android Toolchian.\e[0m"
       git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b lollipop-release $maindir/files/toolchains/aarch64-linux-android-4.9
+      echo -e "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
     fi
 
     echo -e "\e[34mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm64
+    echo $ARCH
     export SUBARCH=arm
+    echo $SUBARCH
     export CROSS_COMPILE=$workingdir/toolchain/bin/aarch64-linux-android-
+    echo $CROSS_COMPILE
   else
-    echo -e "\e[34mDownloading Android Toolchian.\e[0m"
+    echo -e "\e[34mChecking for 32-bit Android Toolchian.\e[0m"
     if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
       echo -e "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
     else
+      echo -e "\e[34mDownloading 32-bit Android Toolchian.\e[0m"
       git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 $maindir/files/toolchains/arm-eabi-4.7
+      echo -e "\e[34mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/arm-eabi-4.7 $workingdir/toolchain
     fi
 
     echo -e "\e[34mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm
+    echo $ARCH
     export SUBARCH=arm
+    echo $SUBARCH
     export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
+    echo $CROSS_COMPILE
   fi
   cp -rf $maindir/files/flash/ $workingdir/flashkernel
   mkdir -p $workingdir/flashkernel/system/lib/modules
