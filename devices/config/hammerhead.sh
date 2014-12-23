@@ -49,6 +49,4 @@ nhb_hammerhead_lollipop(){
 		if [ -d "$workingdir/flash/" ]; then
 			cp $workingdir/flashkernel/boot.img $workingdir/flash/boot.img
 		fi
-
-		nhb_zip_kernel_save
 }
