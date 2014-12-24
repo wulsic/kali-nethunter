@@ -1,4 +1,4 @@
-nhb_mako_stock_kitkat(){
+nhb_mako_kitkat(){
 	cd ${basedir}
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/kitkat/mako ]]; then
