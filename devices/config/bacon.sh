@@ -2,12 +2,14 @@ nhb_bacon_kitkat(){
 	nhb_kernel_build_setup
 
 	cd $workingdir
-	echo "Downloading Kernel"
+	echo "Checking for existing kernel."
 	if [[ -d $maindir/kernel/devices/kitkat/bacon ]]; then
-		echo "Copying kernel to rootfs"
+		echo "Copying kernel to rootfs."
 		cp -rf $maindir/kernel/devices/kitkat/bacon $workingdir/kernel
 	else
+		echo "Downloading Kernel."
 		git clone https://github.com/binkybear/AK-OnePone.git -b cm-11.0-ak $maindir/kernel/devices/kitkat/bacon
+		echo "Copying kernel to rootfs."
 		cp -rf $maindir/kernel/devices/kitkat/bacon $woringdir/kernel
 	fi
 	cd $workingdir/kernel
@@ -16,7 +18,7 @@ nhb_bacon_kitkat(){
 	sleep 10
 	make kali_defconfig
 	# Attach kernel builder to updater-script
-	cp $basepwd/devices/updater-scripts/kitkat/bacon $workingdir/flashkernel/META-INF/com/google/android/updater-script
+	cp $maindir/devices/updater-scripts/kitkat/bacon $workingdir/flashkernel/META-INF/com/google/android/updater-script
 	# Start kernel build
 
 	nhb_kernel_build
