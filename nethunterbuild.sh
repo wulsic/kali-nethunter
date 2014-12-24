@@ -144,7 +144,7 @@ nhb_setup(){
   echo -e "\e[32mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
   cd $maindir
-  for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
+  for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $maindir/$directory && git pull && cd ..;done
   cd $maindir
   if [ -d "$workingdir" ]; then
     echo -e "\e[32mDelete previous working directory.\e[0m"
