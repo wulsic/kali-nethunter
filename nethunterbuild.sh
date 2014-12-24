@@ -181,7 +181,7 @@ nhb_build(){
       echo -e "\e[32mStarting RootFS build.\e[0m"
       $rootfsbuild
       echo -e "\e[32mRootFS build complete.\e[0m";;
-    kernel)
+    kernel|allkernel)
       echo -e "\e[32mStarting kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[32mKernel build complete.\e[0m";;
