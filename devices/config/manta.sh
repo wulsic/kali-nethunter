@@ -1,6 +1,4 @@
 nhb_manta_kitkat(){
-	nhb_kernel_build_setup
-
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/kitkat/manta ]]; then
 		echo "Copying kernel to rootfs"
@@ -20,8 +18,6 @@ nhb_manta_kitkat(){
 }
 
 nhb_manta_lollipop(){
-	nhb_kernel_build_setup
-
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/lollipop/manta ]]; then
   	echo "Copying kernel to rootfs"

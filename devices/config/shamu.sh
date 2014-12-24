@@ -1,6 +1,4 @@
 nhb_shamu_lollipop(){
-	nhb_kernel_build_setup
-
 	cd $workingdir
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/lollipop/shamu ]]; then

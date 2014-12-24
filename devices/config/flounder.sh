@@ -1,6 +1,4 @@
 nhb_flounder_lollipop(){
-	nhb_kernel_build_setup
-
 	if [[ -d $maindir/kernel/devices/lollipop/flounder ]]; then
 		echo "Copying kernel to rootfs"
 		cp -rf $maindir/kernel/devices/lollipop/flounder $workingdir/kernel

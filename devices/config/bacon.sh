@@ -1,6 +1,4 @@
 nhb_bacon_kitkat(){
-	nhb_kernel_build_setup
-
 	cd $workingdir
 	echo "Checking for existing kernel."
 	if [[ -d $maindir/kernel/devices/kitkat/bacon ]]; then
@@ -33,8 +31,6 @@ nhb_bacon_kitkat(){
 }
 
 nhb_bacon_lollipop(){
-	nhb_kernel_build_setup
-
 	cd $workingdir
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/lollipop/bacon ]]; then

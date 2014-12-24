@@ -1,6 +1,4 @@
 nhb_hammerhead_kitkat(){
-	nhb_kernel_build_setup
-
 	cd $workingdir
 	echo "Downloading Kernel"
 	if [[ -d $maindir/devices/kernels/kitkat/hammerhead ]]; then
@@ -22,8 +20,6 @@ nhb_hammerhead_kitkat(){
 }
 
 nhb_hammerhead_lollipop(){
-		nhb_kernel_build_setup
-
 		cd $workingdir
 		echo "Downloading Kernel"
 		if [[ -d $maindir/kernel/devices/lollipop/hammerhead ]]; then

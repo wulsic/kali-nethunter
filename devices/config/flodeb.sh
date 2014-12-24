@@ -1,6 +1,4 @@
 nhb_flodeb_kitkat(){
-	nhb_kernel_build_setup
-
 	echo "Downloading Kernel"
 	cd $workingdir
 	if [[ -d $maindir/kernel/devices/kitkat/flodeb ]]; then
@@ -22,8 +20,6 @@ nhb_flodeb_kitkat(){
 }
 
 nhb_flodeb_lollipop(){
-	nhb_kernel_build_setup
-
 	echo "Downloading Kernel"
 	cd $workingdir
 	if [[ -d $maindir/kernel/devices/lollipop/flodeb ]]; then

@@ -1,6 +1,4 @@
 nhb_mako_stock_kitkat(){
-	nhb_kernel_build_setup
-
 	cd ${basedir}
 	echo "Downloading Kernel"
 	if [[ -d $maindir/kernel/devices/kitkat/mako ]]; then

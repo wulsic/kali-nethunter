@@ -1,9 +1,4 @@
-#####################################################
-# Create Nexus 7 Grouper Kernel (4.4+)
-#####################################################
 nhb_groupertilapia_kitkat(){
-	nhb_kernel_build_setup
-
 	echo "Downloading Kernel"
 	# Kangaroo Kernel has y-cable support and kexec patch built in
 	if [[ -d $maindir/kernel/devices/kitkat/groupertilapia ]]; then

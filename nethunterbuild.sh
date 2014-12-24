@@ -132,14 +132,33 @@ nhb_setup(){
 
   echo -e "\e[32mProcessing kernel build scripts.\e[0m"
   ### Reads sub-scripts for various functions for kernel building
-  source $maindir/devices/config/shamu.sh
-  source $maindir/devices/config/flounder.sh
-  source $maindir/devices/config/hammerhead.sh
-  source $maindir/devices/config/manta.sh
-  source $maindir/devices/config/groupertilapia.sh
-  source $maindir/devices/config/flodeb.sh
-  source $maindir/devices/config/mako.sh
-  source $maindir/devices/config/bacon.sh
+  rm -rf $maindir/devices/.devices
+  rm -rf $maindir/devices/.lollipopdevices
+  rm -rf $maindir/devices/.kitkatdevices
+  for kernelconfigs in $(ls -l $maindir/devices/config |grep .sh|awk -F" " '{print $9}');do source $maindir/devices/config/$kernelconfigs && echo "$kernelconfigs" >> $maindir/devices/.devices;done
+  for lollipopdevices in $(ls -l $maindir/devices/updater-scripts/lollipop | awk -F" " '{print $9}');do echo "$lollipopdevices" >> $maindir/devices/.lollipopdevices;done
+  for kitkatdevices in $(ls -l $maindir/devices/updater-scripts/kitkat | awk -F" " '{print $9}');do echo "$kitkatdevices" >> $maindir/devices/.kitkatdevices;done
+
+  sed -i 's/.sh//g' $maindir/devices/.devices
+
+  if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]; then
+    echo "The build script for $device was not found."
+    exit
+  else
+    if [[ $androidversion == lollipop ]]; then
+      if [[ "$device" != $(cat $maindir/devices/.lollipopdevices | grep $device) ]]; then
+        echo "The updater-script for $device - $androidversion was not found."
+        exit
+      fi
+    fi
+    if [[ $androidversion == kitkat ]]; then
+      if [[ "$device" != $(cat $maindir/devices/.kitkatdevices | grep $device) ]]; then
+        echo "The updater-script for $device - $androidversion was not found."
+        exit
+      fi
+    fi
+  fi
+
 
   echo -e "\e[32mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
@@ -236,17 +255,7 @@ while getopts "b:v:t:o:dkh" flag; do
         *) echo -e "\e[32mInvalid Android version selected: $OPTARG\e[0m"; exit;;
       esac;;
     t)
-      case $OPTARG in
-        manta) device="manta";;
-        grouper|tilapia|groupertilapia|tilapiagrouper) device="groupertilapia";;
-        flo|deb|flodeb|debflo) device="flodeb";;
-        mako) device="mako";;
-        hammerhead) device="hammerhead";;
-        shamu) device="shamu";;
-        flounder) device="flounder";;
-        bacon) device="bacon";;
-        *) echo -e "\e[32mInvalid device selected: $OPTARG\e[0m"; exit;;
-      esac;;
+      device=$OPTARG;;
     o)
       outputdir=$OPTARG
       if [ -d "$outputdir" ]; then
