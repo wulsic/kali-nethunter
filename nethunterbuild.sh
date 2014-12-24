@@ -41,20 +41,6 @@ nhb_check(){
     echo -e "\e[32mThe build cannot continue because an Android version was not specified.\e[0m"
     error=1
   fi
-  ### If Lollipop kernel is selected for an unsupported device, display error and set $error var to 1
-  if [[ $buildtype == "kernel" ]]&&[[ $androidversion == "lollipop" ]]; then
-    if [[ $device == "manta" ]]||[[ $device == "groupertilapia" ]]||[[ $device == "mako" ]]||[[ $device == "gs5" ]]||[[ $device == "gs4" ]]; then
-      echo -e "\e[32mLollipop isn't currently supported on your device.\e[0m"
-      error=1
-    fi
-  fi
-  ### If KitKat kernel is selected for an unsupported device, display error and set $error var to 1
-  if [[ $buildtype == "kernel" ]]&&[[ $androidversion == "kitkat" ]]; then
-    if [[ $device == "shamu" ]]||[[ $device == "flounder" ]]; then
-      echo -e "\e[32mKitKat isn't supported on your device.\e[0m"
-      error=1
-    fi
-  fi
 
   ### Displays the errors above and exits
   if [[ $error == 1 ]]; then
@@ -181,7 +167,7 @@ nhb_build(){
       echo -e "\e[32mStarting RootFS build.\e[0m"
       $rootfsbuild
       echo -e "\e[32mRootFS build complete.\e[0m";;
-    kernel|allkernel)
+    kernel|allkernels)
       echo -e "\e[32mStarting kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[32mKernel build complete.\e[0m";;
@@ -241,11 +227,15 @@ while getopts "b:v:t:o:dkh" flag; do
     b)
       case $OPTARG in
         kernel)
-        buildtype="kernel";;
+          buildtype="kernel";;
         rootfs)
-        buildtype="rootfs";;
+          buildtype="rootfs";;
         all)
-        buildtype="all";;
+          buildtype="all";;
+        allkernels)
+          buildtype="allkernels";;
+        both)
+          buildtype="both";;
         *) echo -e "\e[32mInvalid build type: $OPTARG\e[0m"; exit;;
       esac;;
     v)
@@ -302,6 +292,7 @@ while getopts "b:v:t:o:dkh" flag; do
       echo -e  "all              \e[31m||\e[0m Builds rootfs and kernels for all devices"
       echo -e  "both             \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -a arguments)"
       echo -e  "kernel           \e[31m||\e[0m Builds just a kernel (Requires -t and -a arguments)"
+      echo -e  "allkernels       \e[31m||\e[0m Builds all kernels for all avaliable devices"
       echo -e  "rootfs           \e[31m||\e[0m Builds Nethunter RootFS"
       echo -e -n "\e[31m###\e[37m Versions \e[0m"; for ((n=0;n<($columns-13);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "lollipop         \e[31m||\e[0m Android 5.0 Lollipop"

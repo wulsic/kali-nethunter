@@ -128,7 +128,7 @@ nhb_zip_kernel(){
 }
 
 
-if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernel" ]]; then
+if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernels" ]]; then
   androidversion="lollipop"
   for device in $(cat ~/NetHunter/devices/.lollipopdevices); do
     nhb_kernel_build_setup
