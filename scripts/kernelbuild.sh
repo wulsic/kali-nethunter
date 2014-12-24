@@ -23,11 +23,11 @@ nhb_kernel_build_setup(){
     echo -e "\e[32mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm64
-    echo "ARCH=$ARCH"
+    echo -e "\e[32mARCH=\e[33m$ARCH\e[0m"
     export SUBARCH=arm
-    echo "SUBARCH=$SUBARCH"
+    echo -e "\e[32mSUBARCH=\e[33m$SUBARCH\e[0m"
     export CROSS_COMPILE=$workingdir/toolchain/bin/aarch64-linux-android-
-    echo "CROSS_COMPILE=$CROSS_COMPILE"
+    echo -e "\e[32mCROSS_COMPILE=\e[33m$CROSS_COMPILE\e[0m"
   else
     echo -e "\e[32mChecking for 32-bit Android Toolchian.\e[0m"
     if [[ -d $maindir/files/toolchains/arm-eabi-4.7 ]]; then
@@ -43,11 +43,11 @@ nhb_kernel_build_setup(){
     echo -e "\e[32mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm
-    echo "ARCH=$ARCH"
+    echo -e "\e[32mARCH=\e[33m$ARCH\e[0m"
     export SUBARCH=arm
-    echo "SUBARCH=$SUBARCH"
+    echo -e "\e[32mSUBARCH=\e[33m$SUBARCH\e[0m"
     export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
-    echo "CROSS_COMPILE=$CROSS_COMPILE"
+    echo -e "\e[32mCROSS_COMPILE=\e[33m$CROSS_COMPILE\e[0m"
   fi
   cp -rf $maindir/files/flash/ $workingdir/flashkernel
   mkdir -p $workingdir/flashkernel/system/lib/modules
