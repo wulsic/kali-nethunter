@@ -121,11 +121,19 @@ nhb_setup(){
   rm -rf $maindir/devices/.devices
   rm -rf $maindir/devices/.lollipopdevices
   rm -rf $maindir/devices/.kitkatdevices
-  for kernelconfigs in $(ls -l $maindir/devices/config | grep .sh | awk -F" " '{print $9}');do source $maindir/devices/config/$kernelconfigs && echo "$kernelconfigs" >> $maindir/devices/.devices;done
-  for lollipopdevices in $(ls -l $maindir/devices/updater-scripts/lollipop | awk -F" " '{print $9}');do echo "$lollipopdevices" >> $maindir/devices/.lollipopdevices;done
-  for kitkatdevices in $(ls -l $maindir/devices/updater-scripts/kitkat | awk -F" " '{print $9}');do echo "$kitkatdevices" >> $maindir/devices/.kitkatdevices;done
 
+  for kernelconfigs in $(ls -l $maindir/devices/config | grep .sh | awk -F" " '{print $9}');do source $maindir/devices/config/$kernelconfigs && echo "$kernelconfigs" >> $maindir/devices/.devices;done
   sed -i 's/.sh//g' $maindir/devices/.devices
+
+  for product in $(cat $maindir/devices/.devices);do
+    if grep -q nhb_${product}_lollipop "$maindir/devices/config/$product.sh"; then
+      echo "$product" >> $maindir/devices/.lollipopdevices
+    fi
+    if grep -q nhb_${product}_kitkat "$maindir/devices/config/$product.sh"; then
+      echo "$product" >> $maindir/devices/.kitkatdevices
+    fi
+  done
+
   if [[ $device != "" ]]; then
     if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]; then
       echo "The build script for $device was not found."
