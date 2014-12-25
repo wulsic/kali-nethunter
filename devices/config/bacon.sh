@@ -9,7 +9,7 @@ nhb_bacon_kitkat(){
 		echo -e "\e[32mDownloading Kernel.\e[0m"
 		git clone https://github.com/binkybear/AK-OnePone.git -b cm-11.0-ak $maindir/kernel/devices/kitkat/bacon
 		echo -e "\e[32mCopying kernel to rootfs.\e[0m"
-		cp -rf $maindir/kernel/devices/kitkat/bacon $woringdir/kernel
+		cp -rf $maindir/kernel/devices/kitkat/bacon $workingdir/kernel
 	fi
 	cd $workingdir/kernel
 	echo -e "\e[32mMaking files executable.\e[0m"
