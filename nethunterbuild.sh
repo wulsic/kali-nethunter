@@ -172,7 +172,7 @@ nhb_setup(){
       rm -rf $maindir/kernel/devices/*
       cd $maindir/files/toolchains
       ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
-    elif [[ $buildtype == "both" ]]||[[ $buildtype == "kernel" ]]
+    elif [[ $buildtype == "both" ]]||[[ $buildtype == "kernel" ]]; then
       rm -rf $maindir/kernel/devices/$androidversion/$device
       cd $maindir/files/toolchains
       ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
