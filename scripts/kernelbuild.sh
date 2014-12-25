@@ -8,7 +8,7 @@ nhb_kernel_build_setup(){
   echo -e -n "\e[31m###\e[0m  SETTING UP  "; for ((n=0;n<($columns-17);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  echo -e "\e[32mBeginning build for \e[33m$device\e[32m on \e[33m$androidversion\e[0m"
+  echo -e "\e[32mBeginning build of \e[33m$androidversion\e[0m kernel for \e[33m$device\e[32m."
 
   if [[ $device == "flounder" ]]; then
     echo -e "\e[32mChecking for 64-bit Android Toolchain.\e[0m"
