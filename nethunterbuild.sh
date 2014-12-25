@@ -125,6 +125,11 @@ nhb_setup(){
   for kernelconfigs in $(ls -l $maindir/devices/config | grep .sh | awk -F" " '{print $9}');do source $maindir/devices/config/$kernelconfigs && echo "$kernelconfigs" >> $maindir/devices/.devices;done
   sed -i 's/.sh//g' $maindir/devices/.devices
 
+  if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]&&[[ $device != "" ]]; then
+    echo -e "\e[32mThe build script for $device was not found in $maindir/devices/config/.\e[0m"
+    exit
+  fi
+
   for product in $(cat $maindir/devices/.devices);do
     if grep -q nhb_${product}_lollipop "$maindir/devices/config/$product.sh"; then
       echo "$product" >> $maindir/devices/.lollipopdevices
@@ -134,25 +139,18 @@ nhb_setup(){
     fi
   done
 
-  if [[ $device != "" ]]; then
-    if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]; then
-      echo "The build script for $device was not found."
+  for product in $(cat $maindir/devices/.lollipopdevices);do
+    if [[ ! -f $maindir/devices/updater-scripts/lollipop/$product ]]; then
+      echo -e "\e[32mupdater-script for $product not found in $maindir/devices/updater-scripts/lollipop/.\e[0m"
       exit
-    else
-      if [[ $androidversion == lollipop ]]; then
-        if [[ "$device" != $(cat $maindir/devices/.lollipopdevices | grep $device) ]]; then
-          echo "The updater-script for $device - $androidversion was not found."
-          exit
-        fi
-      fi
-      if [[ $androidversion == kitkat ]]; then
-        if [[ "$device" != $(cat $maindir/devices/.kitkatdevices | grep $device) ]]; then
-          echo "The updater-script for $device - $androidversion was not found."
-          exit
-        fi
-      fi
     fi
-  fi
+  done
+  for product in $(cat $maindir/devices/.kitkatdevices);do
+    if [[ ! -f $maindir/devices/updater-scripts/kitkat/$product ]]; then
+      echo -e "\e[32mupdater-script for $product not found in $maindir/devices/updater-scripts/kitkat/.\e[0m"
+      exit
+    fi
+  done
 
   echo -e "\e[32mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
