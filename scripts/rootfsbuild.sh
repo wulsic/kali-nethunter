@@ -5,8 +5,14 @@ nhb_setup(){
   ###################
   ### BUILD SETUP ###
   ###################
-  echo -e "\e[32mDeleting existing RootFS.\e[0m"
-  rm -rf $kalirootfs/*
+  if [[ -d $toolchaindir/gcc-arm-linux-gnueabihf-4.7 ]]; then
+    echo -e "\e[32mUsing previously downloaded toolchain.\e[0m"
+  else
+    echo -e "\e[32mDownloading toolchain.\e[0m"
+    git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
+    echo -e "\e[32mexporting PATH variable.\e[0m"
+    export PATH=${PATH}:$toolchaindir/gcc-arm-linux-gnueabihf-4.7/bin
+  fi
   unset CROSS_COMPILE
   # Set working folder to rootfs
   cd $workingdir

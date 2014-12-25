@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-
 nhb_kernel_build_setup(){
   export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -21,7 +20,6 @@ nhb_kernel_build_setup(){
       echo -e "\e[32mCopying toolchain to rootfs.\e[0m"
       cp -rf $maindir/files/toolchains/aarch64-linux-android-4.9 $workingdir/toolchain
     fi
-
     echo -e "\e[32mSetting export paths.\e[0m"
     # Set path for Kernel building
     export ARCH=arm64
@@ -51,8 +49,12 @@ nhb_kernel_build_setup(){
     export CROSS_COMPILE=$workingdir/toolchain/bin/arm-eabi-
     echo -e "\e[32mCROSS_COMPILE=\e[33m$CROSS_COMPILE\e[0m"
   fi
+
+  echo -e "\e[32mCopying prebuilt flash folder to working directory.\e[0m"
   cp -rf $maindir/files/flash/ $workingdir/flashkernel
+  echo -e "\e[32mMaking module directory.\e[0m"
   mkdir -p $workingdir/flashkernel/system/lib/modules
+  echo -e "\e[32mRemoving unneeded folders and files from flashable directory.\e[0m"
   rm -rf $workingdir/flashkernel/data
   rm -rf $workingdir/flashkernel/sdcard
   rm -rf $workingdir/flashkernel/system/app
@@ -116,9 +118,10 @@ nhb_zip_kernel(){
   echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  apt-get install -y zip
   cd $workingdir/flashkernel/
+  echo -e "\e[32mDCreating zip file.\e[0m"
   zip -r6 Kernel-$device-$androidversion-$date.zip *
+  echo -e "\e[32mMove zip to root of working directory.\e[0m"
   mv Kernel-$device-$androidversion-$date.zip $workingdir
   cd $workingdir
   # Generate sha1sum

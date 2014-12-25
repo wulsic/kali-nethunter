@@ -158,6 +158,27 @@ nhb_setup(){
   echo -e "\e[32mCreating working directory.\e[0m"
   mkdir -p $workingdir
   cd $workingdir
+
+  ### If -k was selected as argument, keep existing files, otherwise delete and redownload
+  if [[ $keepfiles == 1 ]]; then
+    echo -e "\e[32mKeeping existing build files.\e[0m"
+  else
+    echo -e "\e[32mDeleting existing build files.\e[0m"
+    if [[ $buildtype == "rootfs" ]]||[[ $buildtype == "both" ]]||[[ $buildtype == "all" ]]; then
+      rm -rf $rootfsdir/*
+      rm -rf $maindir/files/toolchains/gcc-arm-linux-gnueabihf-4.7
+    fi
+    if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernels" ]]; then
+      rm -rf $maindir/kernel/devices/*
+      cd $maindir/files/toolchains
+      ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
+    elif [[ $buildtype == "both" ]]||[[ $buildtype == "kernel" ]]
+      rm -rf $maindir/kernel/devices/$androidversion/$device
+      cd $maindir/files/toolchains
+      ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
+    fi
+    cd $workingdir
+  fi
 }
 
 ### Calls outside scripts to do the actual building
@@ -166,23 +187,30 @@ nhb_build(){
     rootfs)
       echo -e "\e[32mStarting RootFS build.\e[0m"
       $rootfsbuild
-      echo -e "\e[32mRootFS build complete.\e[0m";;
-    kernel|allkernels)
+      echo -e "\e[32mRootFS build complete.\e[0m"
+      nhb_output;;
+    kernel)
       echo -e "\e[32mStarting kernel build.\e[0m"
       $kernelbuild
-      echo -e "\e[32mKernel build complete.\e[0m";;
+      echo -e "\e[32mKernel build complete.\e[0m"
+      nhb_output;;
     both)
       echo -e "\e[32mStarting RootFS Build.\e[0m"
       $rootfsbuild
       echo -e "\e[32mRootFS build complete.\e[0m"
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
-      echo -e "\e[32mKernel build complete.\e[0m";;
+      echo -e "\e[32mKernel build complete.\e[0m"
+      nhb_output;;
     all)
       echo -e "\e[32mStarting RootFS Build.\e[0m"
       $rootfsbuild
       echo -e "\e[32mRootFS build complete.\e[0m"
       nhb_output
+      echo -e "\e[32mStarting Kernel build.\e[0m"
+      $kernelbuild
+      echo -e "\e[32mKernel build complete.\e[0m";;
+    allkernels)
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[32mKernel build complete.\e[0m";;
@@ -222,7 +250,7 @@ nhb_output(){
 outputdir=~/NetHunter-Builds
 
 ### Arguments for the script
-while getopts "b:v:t:o:dkh" flag; do
+while getopts "b:v:t:o:kh" flag; do
   case "$flag" in
     b)
       case $OPTARG in
@@ -259,9 +287,6 @@ while getopts "b:v:t:o:dkh" flag; do
           exit
         fi
       fi;;
-    d)
-      echo -e "\e[32mDebugging mode: On\e[0m"
-      DEBUG=1;;
     k)
       keepfiles=1;;
     h)
@@ -276,7 +301,6 @@ while getopts "b:v:t:o:dkh" flag; do
       echo -e  "-v [Version]     \e[31m||\e[0m Android version to build for (Kernel buids only)"
       echo -e  "-o [directory]   \e[31m||\e[0m Where the files are output (Defaults to ~/NetHunter-Builds)"
       echo -e  "-k               \e[31m||\e[0m Keep previously downloaded files (If they exist)"
-      echo -e  "-d               \e[31m||\e[0m Turn debug mode on"
       echo -e -n "\e[31m###\e[37m Devices "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "manta            \e[31m||\e[0m Nexus 10"
       echo -e  "grouper          \e[31m||\e[0m Nexus 7 (2012) Wifi"
@@ -305,4 +329,4 @@ done
 nhb_check
 nhb_setup
 nhb_build
-nhb_output
+echo -e "\e[32mProcess complete. You can find all files in \e[33m$outputdir\e[0m"
