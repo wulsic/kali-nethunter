@@ -248,11 +248,30 @@ nhb_clean(){
   umount $kalirootfs/proc
 }
 
+nhb_compress(){
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  COMPRESSING KALI FS  "; for ((n=0;n<($columns-26);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
+  echo -e "\e[32mCleaning /dev directory.\e[0m"
+  ### Clean up chrooted /dev before packaging.
+  rm -rf  $kalirootfs/dev/*
+
+  ### Compress filesystem and add to zip
+  cd $kalirootfs
+  echo -e "\e[32mCompressing kali rootfs into working directory. Please wait.\e[0m"
+  tar jcf $rootfsdir/kalifs.tar.bz2 $kalirootfs
+}
+
 nhb_zip(){
   export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
+  echo -e "\e[32mCopying rootfs to flash directory.\e[0m"
+  cp $rootfsdir/kalifs.tar.bz2 $workingdir/flash/data/local/kalifs.tar.bz2
 
   echo -e "\e[32mCopying premade flashable directory.\e[0m"
   ### Create base flashable zip
@@ -276,15 +295,6 @@ nhb_zip(){
   wget -P $workingdir/flash/data/app/ https://github.com/pelya/android-keyboard-gadget/raw/master/USB-Keyboard.apk
   ### Suggested: RFAnalyzer
   wget -P $workingdir/flash/data/app/ https://github.com/demantz/RFAnalyzer/raw/master/RFAnalyzer.apk
-
-  echo -e "\e[32mCleaning /dev directory.\e[0m"
-  ### Clean up chrooted /dev before packaging.
-  rm -rf  $kalirootfs/dev/*
-
-  ### Compress filesystem and add to zip
-  cd $kalirootfs
-  echo -e "\e[32mCompressing kali rootfs into working directory. Please wait.\e[0m"
-  tar jcf $workingdir/flash/data/local/kalifs.tar.bz2 $kalirootfs
   echo -e "\e[32mStructure for flashable zip file is complete.\e[0m"
 
   echo -e "\e[32mCreating flashable zip.\e[0m"
@@ -298,10 +308,15 @@ nhb_zip(){
   sleep 5
 }
 
-nhb_setup
-nhb_stage1
-nhb_stage2
-nhb_stage3
-nhb_stage4
-nhb_clean
-nhb_zip
+if [[ -a $rootfsdir/kalifs.tar.bz2 ]]; then
+  nhb_zip
+else
+  nhb_setup
+  nhb_stage1
+  nhb_stage2
+  nhb_stage3
+  nhb_stage4
+  nhb_clean
+  nhb_compress
+  nhb_zip
+fi
