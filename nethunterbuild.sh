@@ -125,9 +125,11 @@ nhb_setup(){
   for kernelconfigs in $(ls -l $maindir/devices/config | grep .sh | awk -F" " '{print $9}');do source $maindir/devices/config/$kernelconfigs && echo "$kernelconfigs" >> $maindir/devices/.devices;done
   sed -i 's/.sh//g' $maindir/devices/.devices
 
-  if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]&&[[ $device != "" ]]; then
-    echo -e "\e[32mThe build script for $device was not found in $maindir/devices/config/.\e[0m"
-    exit
+  if [[ $device != "" ]]; then
+    if [[ "$device" != $(cat $maindir/devices/.devices | grep $device) ]]; then
+      echo -e "\e[32mThe build script for $device was not found in $maindir/devices/config/.\e[0m"
+      exit
+    fi
   fi
 
   for product in $(cat $maindir/devices/.devices);do
