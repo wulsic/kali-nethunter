@@ -173,16 +173,22 @@ nhb_setup(){
   else
     echo -e "\e[32mDeleting existing build files.\e[0m"
     if [[ $buildtype == "rootfs" ]]||[[ $buildtype == "both" ]]||[[ $buildtype == "all" ]]; then
+      echo -e "\e[32mDeleting rootfs.\e[0m"
       rm -rf $rootfsdir/*
+      echo -e "\e[32mDeleting toolchain (gcc-arm-linux-gnueabihf-4.7) .\e[0m"
       rm -rf $maindir/files/toolchains/gcc-arm-linux-gnueabihf-4.7
     fi
     if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernels" ]]; then
+      echo -e "\e[32mDeleting kernels for all devices.\e[0m"
       rm -rf $maindir/kernel/devices/*
       cd $maindir/files/toolchains
+      echo -e "\e[32mDeleting toolchains.\e[0m"
       ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
     elif [[ $buildtype == "both" ]]||[[ $buildtype == "kernel" ]]; then
+      echo -e "\e[32mDeleting $device kernel.\e[0m"
       rm -rf $maindir/kernel/devices/$androidversion/$device
       cd $maindir/files/toolchains
+      echo -e "\e[32mDeleting toolchains.\e[0m"
       ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
     fi
     cd $workingdir
@@ -209,7 +215,12 @@ nhb_build(){
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[32mKernel build complete.\e[0m"
-      nhb_output;;
+      if [[ $combine == 1 ]]; then
+        nhb_combine
+        nhb_output
+      else
+        nhb_output
+      fi;;
     all)
       echo -e "\e[32mStarting RootFS Build.\e[0m"
       $rootfsbuild
@@ -225,6 +236,16 @@ nhb_build(){
   esac
 }
 
+nhb_combine(){
+  if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ $workingdir/Kernel-$device-$androidversion-$date.zip ]]; then
+    export columns=$(tput cols)
+    for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+    echo -e -n "\e[31m###\e[0m  COMBINING ROOTFS AND KERNEL  "; for ((n=0;n<($columns-34);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+    for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
+
+}
+
 ### Moves built files to output directory
 nhb_output(){
   export columns=$(tput cols)
@@ -234,16 +255,14 @@ nhb_output(){
 
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
     echo -e "\e[32mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
-    cd $workingdir
     mkdir -p $outputdir/RootFS
-    mv NetHunter-$date.zip $outputdir/RootFS/NetHunter-$date.zip
-    mv NetHunter-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
+    mv $workingdir/NetHunter-$date.zip $outputdir/RootFS/NetHunter-$date.zip
+    mv $workingdir/NetHunter-$date.sha1sum $outputdir/RootFS/NetHunter-$date.sha1sum
     echo -e "\e[32mNetHunter is now located at \e[33m$outputdir/RootFS/NetHunter-$date.zip\e[0m"
     echo -e "\e[32mNetHunter's SHA1 sum located at \e[33m$outputdir/RootFS/NetHunter-$date.sha1sum\e[0m"
   fi
   if [[ -a $workingdir/Kernel-$device-$androidversion-$date.zip ]]&&[[ -a $workingdir/Kernel-$device-$androidversion-$date.sha1sum ]]; then
     echo -e "\e[32mMoving kernel and SHA1 sum from working directory to output directory.\e[0m"
-    cd $workingdir
     mkdir -p $outputdir/Kernels/$device
     mv $workingdir/Kernel-$device-$androidversion-$date.zip $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.zip
     mv $workingdir/Kernel-$device-$androidversion-$date.sha1sum $outputdir/Kernels/$device/Kernel-$device-$androidversion-$date.sha1sum
