@@ -215,12 +215,7 @@ nhb_build(){
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
       echo -e "\e[32mKernel build complete.\e[0m"
-      if [[ $combine == 1 ]]; then
-        nhb_combine
-        nhb_output
-      else
-        nhb_output
-      fi;;
+      nhb_output;;
     all)
       echo -e "\e[32mStarting RootFS Build.\e[0m"
       $rootfsbuild
@@ -242,7 +237,7 @@ nhb_combine(){
     for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
     echo -e -n "\e[31m###\e[0m  COMBINING ROOTFS AND KERNEL  "; for ((n=0;n<($columns-34);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
     for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-  fi  
+  fi
 }
 
 ### Moves built files to output directory
