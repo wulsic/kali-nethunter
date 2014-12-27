@@ -10,7 +10,7 @@ nhb_setup(){
   else
     echo -e "\e[32mDownloading toolchain.\e[0m"
     git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
-    echo -e "\e[32mexporting PATH variable.\e[0m"
+    echo -e "\e[32mExporting PATH variable.\e[0m"
     export PATH=${PATH}:$toolchaindir/gcc-arm-linux-gnueabihf-4.7/bin
   fi
   unset CROSS_COMPILE
@@ -270,14 +270,14 @@ nhb_zip(){
   echo -e -n "\e[31m###\e[0m  CREATING ZIP  "; for ((n=0;n<($columns-19);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  echo -e "\e[32mCopying rootfs to flash directory.\e[0m"
-  cp $rootfsdir/kalifs.tar.bz2 $workingdir/flash/data/local/kalifs.tar.bz2
-
   echo -e "\e[32mCopying premade flashable directory.\e[0m"
   ### Create base flashable zip
   cp -rf $maindir/files/flash $workingdir/
   mkdir -p $workingdir/flash/data/local/
   mkdir -p $workingdir/flash/system/lib/modules
+
+  echo -e "\e[32mCopying rootfs to flash directory.\e[0m"
+  cp $rootfsdir/kalifs.tar.bz2 $workingdir/flash/data/local/kalifs.tar.bz2
 
   echo -e "\e[32mInstalling extra applications for Android.\e[0m"
   ### Download/add Android applications that are useful to our chroot enviornment

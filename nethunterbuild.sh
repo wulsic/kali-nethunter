@@ -231,21 +231,38 @@ nhb_build(){
   esac
 }
 
-nhb_combine(){
-  if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ $workingdir/Kernel-$device-$androidversion-$date.zip ]]; then
-    export columns=$(tput cols)
-    for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-    echo -e -n "\e[31m###\e[0m  COMBINING ROOTFS AND KERNEL  "; for ((n=0;n<($columns-34);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-    for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-  fi
-}
-
 ### Moves built files to output directory
 nhb_output(){
   export columns=$(tput cols)
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-23);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
+  if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ $workingdir/Kernel-$device-$androidversion-$date.zip ]]&&[[ $combine == 1 ]]; then
+    echo -e "\e[32mCreating temporary directory.\e[0m"
+    mkdir -p $maindir/tmp/combined
+    echo -e "\e[32mUnzipping rootfs.\e[0m"
+    unzip $workingdir/NetHunter-$date.zip -d $maindir/tmp/rootfs
+    echo -e "\e[32mUnzipping kernel.\e[0m"
+    unzip $workingdir/Kernel-$device-$androidversion-$date.zip -d $maindir/tmp/kernel
+    echo -e "\e[32Copying rootfs files to combined directory.\e[0m"
+    rsync -av $maindir/tmp/rootfs $maindir/tmp/combined
+    echo -e "\e[32Copying kernel files to combined directory.\e[0m"
+    rsync -av $maindir/tmp/kernel $maindir/tmp/combined
+    echo -e "\e[32Appending rootfs install script to kernel script.\e[0m"
+    cat $maindir/tmp/rootfs/META-INF/com/google/android/updater-script >> $maindir/tmp/combined/META-INF/com/google/android/updater-script
+    cd $maindir/tmp/combined
+    echo -e "\e[32Creating zip file and moving it to working directory.\e[0m"
+    zip -r6 NetHunter-Full-$device-$androidversion-$date.zip *
+    mv NetHunter-Full-$device-$androidversion-$date.zip $workingdir
+    cd $workingdir
+    echo -e "\e[32mGenerating sha1sum for NetHunter-Full-$device-$androidversion-$date.zip.\e[0m"
+    sha1sum $workingdir/NetHunter-Full-$device-$androidversion-$date.zip > $workingdir/NetHunter-Full-$device-$androidversion-$date.sha1sum
+    mkdir -p $outputdir/NetHunter-Full/$device
+    mv $workingdir/NetHunter-Full-$device-$androidversion-$date.zip $outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.zip
+    mv $workingdir/NetHunter-Full-$device-$androidversion-$date.sha1sum $outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.sha1sum
+    rm -rf $maindir/tmp
+  fi
 
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
     echo -e "\e[32mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
@@ -271,7 +288,7 @@ nhb_output(){
 outputdir=~/NetHunter-Builds
 
 ### Arguments for the script
-while getopts "b:v:t:o:kh" flag; do
+while getopts "b:v:t:o:khc" flag; do
   case "$flag" in
     b)
       case $OPTARG in
@@ -344,6 +361,8 @@ while getopts "b:v:t:o:kh" flag; do
       echo -e  "kitkat           \e[31m||\e[0m Android 4.4.2 - 4.4.4 KitKat"
       for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       exit;;
+    c)
+      combined=1;;
   esac
 done
 
