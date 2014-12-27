@@ -242,8 +242,7 @@ nhb_combine(){
     for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
     echo -e -n "\e[31m###\e[0m  COMBINING ROOTFS AND KERNEL  "; for ((n=0;n<($columns-34);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
     for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-
-
+  fi  
 }
 
 ### Moves built files to output directory
