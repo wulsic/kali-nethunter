@@ -238,7 +238,7 @@ nhb_output(){
   echo -e -n "\e[31m###\e[0m  MOVING TO OUTPUT  "; for ((n=0;n<($columns-23);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  if [[ $combine == 1 ]]; then
+  if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/Kernel-$device-$androidversion-$date.zip ]]&&[[ $combine == 1 ]]; then
     echo -e "\e[32mCreating temporary directory.\e[0m"
     mkdir -p $maindir/tmp/combined
     echo -e "\e[32mUnzipping rootfs.\e[0m"
@@ -362,7 +362,7 @@ while getopts "b:v:t:o:khc" flag; do
       for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       exit;;
     c)
-      combined=1;;
+      combine=1;;
   esac
 done
 
