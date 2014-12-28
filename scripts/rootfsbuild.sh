@@ -309,6 +309,7 @@ nhb_zip(){
 }
 
 if [[ -a $rootfsdir/kalifs.tar.bz2 ]]; then
+  nhb_compress
   nhb_zip
 else
   nhb_setup
