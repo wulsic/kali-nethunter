@@ -267,8 +267,8 @@ nhb_combine(){
   if [[ $buildtype == "both" ]]; then
     rm -rf $maindir/tmp
   elif [[ $buildtype == "all" ]]; then
-    rm -rf $maindir/combined
-    rm -rf $maindir/kernel
+    rm -rf $maindir/tmp/combined
+    rm -rf $maindir/tmp/kernel
   fi
 }
 
