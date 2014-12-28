@@ -225,6 +225,7 @@ nhb_build(){
       echo -e "\e[32mRootFS build complete.\e[0m"
       if [[ $combine == 1 ]]; then
         nhb_output
+        mkdir -p $maindir/tmp/rootfs
         unzip $outputdir/RootFS/NetHunter-$date.zip -d $maindir/tmp/rootfs
       else
         nhb_output
