@@ -225,14 +225,15 @@ nhb_build(){
       echo -e "\e[32mRootFS build complete.\e[0m"
       if [[ $combine == 1 ]]; then
         nhb_output
-        mkdir -p $maindir/tmp/rootfs
+        echo -e "\e[32mUnzipping rootfs to later combine scripts.\e[0m"
         unzip $outputdir/RootFS/NetHunter-$date.zip -d $maindir/tmp/rootfs
       else
         nhb_output
       fi
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
-      echo -e "\e[32mKernel build complete.\e[0m";;
+      echo -e "\e[32mKernel build complete.\e[0m"
+      rm -rf $maindir/tmp;;
     allkernels)
       echo -e "\e[32mStarting Kernel build.\e[0m"
       $kernelbuild
@@ -242,6 +243,11 @@ nhb_build(){
 
 
 nhb_combine(){
+  export columns=$(tput cols)
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  echo -e -n "\e[31m###\e[0m  COMBINING ROOTFS AND KERNEL  "; for ((n=0;n<($columns-34);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+  for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+
   echo -e "\e[32mCreating temporary directory.\e[0m"
   mkdir -p $maindir/tmp/combined
   if [[ $buildtype == "both" ]]; then
@@ -265,8 +271,10 @@ nhb_combine(){
   sha1sum $workingdir/NetHunter-Full-$device-$androidversion-$date.zip > $workingdir/NetHunter-Full-$device-$androidversion-$date.sha1sum
   nhb_output
   if [[ $buildtype == "both" ]]; then
+    echo -e "\e[32mDeleting temporary directory.\e[0m"
     rm -rf $maindir/tmp
   elif [[ $buildtype == "all" ]]; then
+    echo -e "\e[32mDeleting temporary combined and kernel directories.\e[0m"
     rm -rf $maindir/tmp/combined
     rm -rf $maindir/tmp/kernel
   fi
@@ -280,9 +288,12 @@ nhb_output(){
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
   if [[ -a $workingdir/NetHunter-Full-$device-$androidversion-$date.zip ]]&&[[ -a $workingdir/NetHunter-Full-$device-$androidversion-$date.zip ]]; then
+    echo -e "\e[32mMoving full NetHunter from working directory to output directory.\e[0m"
     mkdir -p $outputdir/NetHunter-Full/$device
     mv $workingdir/NetHunter-Full-$device-$androidversion-$date.zip $outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.zip
     mv $workingdir/NetHunter-Full-$device-$androidversion-$date.sha1sum $outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.sha1sum
+    echo -e "\e[32mNetHunter is now located at \e[33m$outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.zipp\e[0m"
+    echo -e "\e[32mNetHunter's SHA1 sum located at \e[33m$outputdir/NetHunter-Full/$device/NetHunter-Full-$device-$androidversion-$date.sha1sum\e[0m"
   fi
   if [[ -a $workingdir/NetHunter-$date.zip ]]&&[[ -a $workingdir/NetHunter-$date.sha1sum ]]; then
     echo -e "\e[32mMoving NetHunter RootFS and SHA1 sum from working directory to output directory.\e[0m"
