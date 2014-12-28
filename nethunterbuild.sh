@@ -370,7 +370,7 @@ while getopts "b:v:t:o:khc" flag; do
       echo -e  "-v [Version]     \e[31m||\e[0m Android version to build for (Kernel buids only)"
       echo -e  "-o [directory]   \e[31m||\e[0m Where the files are output (Defaults to ~/NetHunter-Builds)"
       echo -e  "-k               \e[31m||\e[0m Keep previously downloaded files (If they exist)"
-      echo -e  "-c               \e[31m||\e[0m Combine rootfs and kernel into one package [''-b both' builds only!]"
+      echo -e  "-c               \e[31m||\e[0m Combine rootfs and kernel into one package ['both' or 'all' buildtypes]"
       echo -e -n "\e[31m###\e[37m Devices "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "manta            \e[31m||\e[0m Nexus 10"
       echo -e  "grouper          \e[31m||\e[0m Nexus 7 (2012) Wifi"
