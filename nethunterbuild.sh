@@ -385,8 +385,8 @@ while getopts "b:v:t:o:khc" flag; do
       echo -e  "bacon            \e[31m||\e[0m OnePlus One"
       echo -e -n "\e[31m###\e[37m Build Types \e[0m"; for ((n=0;n<($columns-16);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "all              \e[31m||\e[0m Builds rootfs and kernels for all devices"
-      echo -e  "both             \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -a arguments)"
-      echo -e  "kernel           \e[31m||\e[0m Builds just a kernel (Requires -t and -a arguments)"
+      echo -e  "both             \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -v arguments)"
+      echo -e  "kernel           \e[31m||\e[0m Builds just a kernel (Requires -t and -v arguments)"
       echo -e  "allkernels       \e[31m||\e[0m Builds all kernels for all avaliable devices"
       echo -e  "rootfs           \e[31m||\e[0m Builds Nethunter RootFS"
       echo -e -n "\e[31m###\e[37m Versions \e[0m"; for ((n=0;n<($columns-13);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
