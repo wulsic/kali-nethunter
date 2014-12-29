@@ -133,7 +133,7 @@ nhb_zip_kernel(){
 
 if [[ $buildtype == "all" ]]; then
   androidversion="lollipop"
-  for device in $(cat ~/NetHunter/devices/.lollipopdevices); do
+  for device in $(cat $maindir/devices/.lollipopdevices); do
     nhb_kernel_build_setup
     nhb_${device}_${androidversion}
     nhb_zip_kernel
@@ -144,7 +144,7 @@ if [[ $buildtype == "all" ]]; then
     fi
   done
   androidversion="kitkat"
-  for device in $(cat ~/NetHunter/devices/.kitkatdevices); do
+  for device in $(cat $maindir/devices/.kitkatdevices); do
     nhb_kernel_build_setup
     nhb_${device}_${androidversion}
     nhb_zip_kernel
