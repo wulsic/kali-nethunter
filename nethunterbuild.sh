@@ -316,7 +316,8 @@ nhb_output(){
 
 
 ### Defaults for script
-outputdir=~/NetHunter-Builds
+export outputdir=~/NetHunter-Builds
+export maindir=~/NetHunter
 
 ### Arguments for the script
 while getopts "b:v:t:o:khc" flag; do
@@ -342,7 +343,7 @@ while getopts "b:v:t:o:khc" flag; do
         *) echo -e "\e[32mInvalid Android version selected: $OPTARG\e[0m"; exit;;
       esac;;
     t)
-      device=$OPTARG;;
+      export device=$OPTARG;;
     o)
       outputdir=$OPTARG
       if [ -d "$outputdir" ]; then
@@ -357,7 +358,7 @@ while getopts "b:v:t:o:khc" flag; do
         fi
       fi;;
     k)
-      keepfiles=1;;
+      export keepfiles=1;;
     h)
       clear
       export columns=$(tput cols)
@@ -394,7 +395,9 @@ while getopts "b:v:t:o:khc" flag; do
       for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       exit;;
     c)
-      combine=1;;
+      export combine=1;;
+    w)
+      export maindir=$OPTARG;;
   esac
 done
 
