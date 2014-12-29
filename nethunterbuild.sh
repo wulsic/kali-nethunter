@@ -59,7 +59,6 @@ nhb_setup(){
   echo -e "\e[32mSetting variables.\e[0m"
   export date=$(date +%m%d%Y)
   export architecture="armhf"
-  export maindir=~/NetHunter
   export workingdir=$maindir/working-directory
   export rootfsdir=$maindir/rootfs
   export kalirootfs=$rootfsdir/kali-$architecture
