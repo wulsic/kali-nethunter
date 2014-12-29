@@ -316,7 +316,7 @@ nhb_output(){
 
 ### Defaults for script
 export outputdir=~/NetHunter-Builds
-export maindir=NetHunter
+export maindir=`pwd`/NetHunter
 
 ### Arguments for the script
 while getopts "b:v:t:o:khcw" flag; do
