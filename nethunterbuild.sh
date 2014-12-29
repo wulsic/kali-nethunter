@@ -319,7 +319,7 @@ export outputdir=~/NetHunter-Builds
 export maindir=~/NetHunter
 
 ### Arguments for the script
-while getopts "b:v:t:o:khc" flag; do
+while getopts "b:v:t:o:khcw" flag; do
   case "$flag" in
     b)
       case $OPTARG in
