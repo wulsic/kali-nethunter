@@ -315,11 +315,12 @@ nhb_output(){
 
 
 ### Defaults for script
-export outputdir=~/NetHunter-Builds
 if [[ $(ls `pwd` | grep nethunterbuild.sh) ]]; then
   export maindir=`pwd`
+  export outputdir=`pwd`/NetHunter-Builds
 else
   export maindir=`pwd`/NetHunter
+  export outputdir=`pwd`/NetHunter/NetHunter-Builds
 fi
 
 ### Arguments for the script
