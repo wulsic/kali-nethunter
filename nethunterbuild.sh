@@ -401,7 +401,7 @@ while getopts "b:v:t:o:khcw" flag; do
     c)
       export combine=1;;
     w)
-      export maindir=$OPTARG;;
+      export maindir=$OPTARG/NetHunter;;
   esac
 done
 
