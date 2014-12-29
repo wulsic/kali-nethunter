@@ -401,7 +401,11 @@ while getopts "b:v:t:o:khcw" flag; do
     c)
       export combine=1;;
     w)
-      export maindir=$OPTARG/NetHunter;;
+    if [[ $(ls `pwd` | grep nethunterbuild.sh) ]]; then
+      export maindir=$OPTARG
+    else
+      export maindir=$OPTARG/NetHunter
+    fi;;
   esac
 done
 
