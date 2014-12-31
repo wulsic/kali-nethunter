@@ -62,6 +62,12 @@ nhb_stage2(){
   cp -rf $maindir/files/bin/start-update.sh $kalirootfs/usr/bin/
   cp -rf $maindir/files/bin/hid/* $kalirootfs/usr/bin/
   cp -rf $maindir/files/bin/msf/*.sh $kalirootfs/usr/bin/
+  chmod 755 kali-$architecture/usr/bin/*.sh
+  chmod 755 kali-$architecture/usr/bin/*.py
+
+  # Set up HID powersploit hostped payload
+  cp -rf ${basepwd}/utils/files/powersploit-payload kali-$architecture/var/www/payload
+  chmod 644 kali-$architecture/var/www/payload
 }
 
 nhb_stage3(){
@@ -72,16 +78,17 @@ nhb_stage3(){
 
   ### Packages to install to chroot
   arm="abootimg cgpt fake-hwclock ntpdate vboot-utils vboot-kernel-utils uboot-mkimage"
-  base="kali-menu kali-defaults initramfs-tools usbutils openjdk-7-jre mlocate"
+  base="kali-menu kali-defaults initramfs-tools usbutils openjdk-7-jre mlocate google-nexus-tools"
   desktop="kali-defaults kali-root-login desktop-base xfce4 xfce4-places-plugin xfce4-goodies"
   tools="nmap metasploit tcpdump tshark wireshark burpsuite armitage sqlmap recon-ng wipe socat ettercap-text-only beef-xss set device-pharmer"
   wireless="wifite iw aircrack-ng gpsd kismet kismet-plugins giskismet dnsmasq dsniff sslstrip mdk3 mitmproxy"
   services="autossh openssh-server tightvncserver apache2 postgresql openvpn php5"
   extras="wpasupplicant zip macchanger dbd florence libffi-dev python-setuptools python-pip hostapd ptunnel tcptrace dnsutils p0f mitmf"
   mana="python-twisted python-dnspython libnl1 libnl-dev libssl-dev sslsplit python-pcapy tinyproxy isc-dhcp-server rfkill mana-toolkit"
+  bdf="backdoor-factory bdfproxy"
   spiderfoot="python-lxml python-m2crypto python-netaddr python-mako"
   sdr="sox librtlsdr"
-  export packages="${arm} ${base} ${desktop} ${tools} ${wireless} ${services} ${extras} ${mana} ${spiderfoot} ${sdr}"
+  export packages="${arm} ${base} ${desktop} ${tools} ${wireless} ${services} ${extras} ${mana} ${spiderfoot} ${sdr} ${bdf}"
 
   ### Export variables
   export MALLOC_CHECK_=0
@@ -182,15 +189,6 @@ nhb_stage4(){
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/kalimenu
   sleep 5
 
-  echo -e "\e[32mInstalling ADB and fastboot.\e[0m"
-  ### Installs ADB and fastboot compiled for ARM
-  git clone git://git.kali.org/packages/google-nexus-tools
-  cp ./google-nexus-tools/bin/linux-arm-adb $kalirootfs/usr/bin/adb
-  cp ./google-nexus-tools/bin/linux-arm-fastboot $kalirootfs/usr/bin/fastboot
-  rm -rf ./google-nexus-tools
-  LANG=C chroot $kalirootfs chmod 755 /usr/bin/fastboot
-  LANG=C chroot $kalirootfs chmod 755 /usr/bin/adb
-
   echo -e "\e[32mInstalling deADBolt.\e[0m"
   ### Installs deADBolt
   curl -o $kalirootfs/usr/bin/deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
@@ -209,6 +207,10 @@ nhb_stage4(){
   cp $maindir/files/bin/hid/hid-dic.sh $kalirootfs/usr/bin/hid-dic
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/hid-keyboard
   LANG=C chroot $kalirootfs chmod 755 /usr/bin/hid-dic
+
+  ### Sets the default for hostapd.conf to the mana karma version
+  sed -i 's#^DAEMON_CONF=.*#DAEMON_CONF=/etc/mana-toolkit/hostapd-karma.conf#' $kalirootfs/etc/init.d/hostapd
+  sed -i 's/wlan0/wlan1/g' $kalirootfs/etc/mana-toolkit/hostapd-karma.conf
 
   echo -e "\e[32mCopying DNSMasq.conf.\e[0m"
   ### DNSMASQ Configuration options for optional access point
