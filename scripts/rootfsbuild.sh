@@ -62,12 +62,12 @@ nhb_stage2(){
   cp -rf $maindir/files/bin/start-update.sh $kalirootfs/usr/bin/
   cp -rf $maindir/files/bin/hid/* $kalirootfs/usr/bin/
   cp -rf $maindir/files/bin/msf/*.sh $kalirootfs/usr/bin/
-  chmod 755 kali-$architecture/usr/bin/*.sh
-  chmod 755 kali-$architecture/usr/bin/*.py
+  chmod 755 $kalirootfs/usr/bin/*.sh
+  chmod 755 $kalirootfs/usr/bin/*.py
 
   # Set up HID powersploit hostped payload
-  cp -rf ${basepwd}/utils/files/powersploit-payload kali-$architecture/var/www/payload
-  chmod 644 kali-$architecture/var/www/payload
+  cp -rf ${basepwd}/utils/files/powersploit-payload $kalirootfs/var/www/payload
+  chmod 644 $kalirootfs/var/www/payload
 }
 
 nhb_stage3(){
