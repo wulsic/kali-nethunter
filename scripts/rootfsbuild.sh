@@ -66,7 +66,7 @@ nhb_stage2(){
   chmod 755 $kalirootfs/usr/bin/*.py
 
   # Set up HID powersploit hostped payload
-  cp -rf $maindir/utils/files/powersploit-payload $kalirootfs/var/www/payload
+  cp -rf $maindir/files/bin/hid/powersploit-payload $kalirootfs/var/www/payload
   chmod 644 $kalirootfs/var/www/payload
 }
 
