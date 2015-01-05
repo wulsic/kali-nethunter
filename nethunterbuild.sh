@@ -184,6 +184,11 @@ nhb_setup(){
     fi
     cd $workingdir
   fi
+
+  if [[ $hostsources == 1 ]]; then
+    mv $maindir/files/config/sources.list $maindir/files/config/sources.list.bak
+    cp /etc/apt/sources.list $maindir/files/config/sources.list
+  fi
 }
 
 ### Calls outside scripts to do the actual building
@@ -305,6 +310,15 @@ nhb_output(){
   rm -rf $workingdir/*
 }
 
+nhb_post(){
+  if [[ $hostsources == 1 ]]; then
+    rm -rf $maindir/files/config/sources.list
+    $maindir/files/config/sources.list.bak $maindir/files/config/sources.list
+  fi
+
+  echo -e "\e[32mProcess complete. You can find all files in \e[33m$outputdir\e[0m"
+}
+
 
 ### Defaults for script
 if [[ $(ls `pwd` | grep nethunterbuild.sh) ]]; then
@@ -316,7 +330,7 @@ else
 fi
 
 ### Arguments for the script
-while getopts "b:v:t:o:w:khc" flag; do
+while getopts "b:v:t:o:w:khcs" flag; do
   case "$flag" in
     b)
       case $OPTARG in
@@ -356,6 +370,7 @@ while getopts "b:v:t:o:w:khc" flag; do
       echo -e  "-v [Version]     \e[31m||\e[0m Android version to build for (Kernel buids only)"
       echo -e  "-o [directory]   \e[31m||\e[0m Output directory realative to present working directory"
       echo -e  "-w [directory]   \e[31m||\e[0m Working directory realative to present working directory"
+      echo -e  "-s               \e[31m||\e[0m Use host machine's sources.list file for builds."
       echo -e  "-k               \e[31m||\e[0m Keep previously downloaded files (If they exist)"
       echo -e  "-c               \e[31m||\e[0m Combine rootfs and kernel into one package ['both' or 'all' buildtypes]"
       echo -e -n "\e[31m###\e[37m Devices "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
@@ -384,10 +399,12 @@ while getopts "b:v:t:o:w:khc" flag; do
       export combine=1;;
     w)
       export maindir=`pwd`/$OPTARG;;
+    m)
+      export hostsources=1;;
   esac
 done
 
 nhb_check
 nhb_setup
 nhb_build
-echo -e "\e[32mProcess complete. You can find all files in \e[33m$outputdir\e[0m"
+nhb_post
