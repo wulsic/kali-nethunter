@@ -131,7 +131,7 @@ nhb_zip_kernel(){
 }
 
 
-if [[ $buildtype == "all" ]]; then
+if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernels" ]]; then
   androidversion="lollipop"
   for device in $(cat $maindir/devices/.lollipopdevices); do
     nhb_kernel_build_setup

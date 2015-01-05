@@ -155,6 +155,7 @@ nhb_setup(){
   git stash drop
   for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $maindir/$directory && git pull && cd ..;done
   cd $maindir
+  chmod +x nethunterbuild.sh
   if [ -d "$workingdir" ]; then
     echo -e "\e[32mDelete previous working directory.\e[0m"
     rm -rf $workingdir
