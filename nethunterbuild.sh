@@ -12,7 +12,7 @@ nhb_check(){
     testkali=$(cat /etc/*-release | grep "ID=kali")
   fi
   if [[ $testkali == "ID=kali"* && ( $hostarch == "x86_64" || $hostarch == "amd64" ) ]]; then
-    echo -e "\e[32m64 bit Kali Linux detected.\e[0m"
+    sleep 0
   else
     echo -e "\e[32mThis utility is only compatible with 64 bit Kali Linux.\e[0m"
     exit
@@ -167,24 +167,20 @@ nhb_setup(){
     echo -e "\e[32mKeeping existing build files.\e[0m"
   else
     echo -e "\e[32mDeleting existing build files.\e[0m"
+    if [[ -d $maindir/files/toolchains ]]; then
+      echo -e "\e[32mDeleting toolchains.\e[0m"
+      rm -rf $maindir/files/toolchains/*
+    fi
     if [[ $buildtype == "rootfs" ]]||[[ $buildtype == "both" ]]||[[ $buildtype == "all" ]]; then
       echo -e "\e[32mDeleting rootfs.\e[0m"
       rm -rf $rootfsdir/*
-      echo -e "\e[32mDeleting toolchain (gcc-arm-linux-gnueabihf-4.7) .\e[0m"
-      rm -rf $maindir/files/toolchains/gcc-arm-linux-gnueabihf-4.7
     fi
     if [[ $buildtype == "all" ]]||[[ $buildtype == "allkernels" ]]; then
       echo -e "\e[32mDeleting kernels for all devices.\e[0m"
       rm -rf $maindir/kernel/devices/*
-      cd $maindir/files/toolchains
-      echo -e "\e[32mDeleting toolchains.\e[0m"
-      ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
     elif [[ $buildtype == "both" ]]||[[ $buildtype == "kernel" ]]; then
       echo -e "\e[32mDeleting $device kernel.\e[0m"
       rm -rf $maindir/kernel/devices/$androidversion/$device
-      cd $maindir/files/toolchains
-      echo -e "\e[32mDeleting toolchains.\e[0m"
-      ls | grep -v 'gcc-arm-linux-gnueabihf-4.7' | xargs rm -rf
     fi
     cd $workingdir
   fi
