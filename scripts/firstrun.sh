@@ -59,7 +59,13 @@ nhb_firstrun(){
   fi
 }
 
-
+if [[ $(ls `pwd` | grep nethunterbuild.sh) ]]; then
+  export maindir=`pwd`
+  export outputdir=`pwd`/NetHunter-Builds
+else
+  export maindir=`pwd`/NetHunter
+  export outputdir=`pwd`/NetHunter/NetHunter-Builds
+fi
 
 while getopts "o:w:" flag; do
   case "$flag" in
@@ -71,4 +77,5 @@ while getopts "o:w:" flag; do
 done
 
 nhb_firstrun
+echo -e "\e[32mRun\e[0m\n$maindir/nethunterbuild.sh -h\n\e[32mto view arguments needed to run the nethunterbuild.sh script.\e[0m"
 rm -- "$0"
