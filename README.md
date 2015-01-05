@@ -13,7 +13,7 @@ Installation instructions and image downloads can be found at [nethunter.com](ht
 ## Building from sources
 You can also rebuild the NetHunter images from scratch, which allows for easier image modification. For best results use a 64 bit Kali Linux development environment with over 10Gb free disk space and enter the following commands:
 
-### REMEMBER TO CHANGE WORKING DIRECTORY TO THE DIRECTORY YOU WANT NETHUNTER TO BUILD FROM.
+**REMEMBER TO CHANGE WORKING DIRECTORY TO THE DIRECTORY YOU WANT NETHUNTER TO BUILD FROM.**
 
 ```
 curl -o firstrun.sh 'https://raw.githubusercontent.com/offensive-security/kali-nethunter/nethunterbuild/scripts/firstrun.sh'
