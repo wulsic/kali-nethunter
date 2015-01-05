@@ -69,6 +69,8 @@ nhb_stage2(){
   mkdir -p $kalirootfs/var/www/payload
   cp -rf $maindir/files/bin/hid/powersploit-payload $kalirootfs/var/www/payload
   chmod 644 $kalirootfs/var/www/payload
+
+  cp $kalirootfs/* $rootfsdir/kali-$architecture-base/*
 }
 
 nhb_stage3(){
@@ -311,7 +313,15 @@ nhb_zip(){
   sleep 5
 }
 
-if [[ -a $rootfsdir/kalifs.tar.bz2 ]]; then
+if [[ -d $rootfsdir/kali-$architecture-base ]]; then
+  mkdir -p $kalirootfs
+  LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y update
+  LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y upgrade
+  cp $rootfsdir/kali-$architecture-base/* $kalirootfs/*
+
+  nhb_stage3
+  nhb_stage4
+  nhb_clean
   nhb_compress
   nhb_zip
 else
@@ -324,3 +334,4 @@ else
   nhb_compress
   nhb_zip
 fi
+rm -rf $kalirootfs
