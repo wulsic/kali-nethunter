@@ -362,7 +362,7 @@ while getopts "b:v:t:o:w:khcs" flag; do
       clear
       export columns=$(tput cols)
       echo -e "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-      echo -e -n "\e[31m###\e[37m e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/build \e[0m"; for ((n=0;n<($columns-75);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+      echo -e -n "\e[31m###\e[37m e.g. ./nethunterbuilder.sh -b kernel -t flounder -v lollipop -o build \e[0m"; for ((n=0;n<($columns-74);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e -n "\e[31m###\e[37m Options "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "-h               \e[31m||\e[0m This help menu"
       echo -e  "-b [type]        \e[31m||\e[0m Build type"
