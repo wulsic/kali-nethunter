@@ -88,7 +88,6 @@ nhb_setup(){
     MACHINE_TYPE=`uname -m`
     if [ ${MACHINE_TYPE} == 'x86_64' ]; then
       dpkg --add-architecture i386
-      apt-get update
       apt-get install -y ia32-libs
       # Required for kernel cross compiles
       apt-get install -y libncurses5:i386
@@ -152,6 +151,8 @@ nhb_setup(){
   echo -e "\e[32mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
   cd $maindir
+  git stash save
+  git stash drop
   for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $maindir/$directory && git pull && cd ..;done
   cd $maindir
   if [ -d "$workingdir" ]; then
@@ -361,7 +362,7 @@ while getopts "b:v:t:o:w:khcs" flag; do
     h)
       clear
       export columns=$(tput cols)
-      echo -e "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+      echo -e -n "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e -n "\e[31m###\e[37m e.g. ./nethunterbuilder.sh -b kernel -t flounder -v lollipop -o build \e[0m"; for ((n=0;n<($columns-74);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e -n "\e[31m###\e[37m Options "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "-h               \e[31m||\e[0m This help menu"
