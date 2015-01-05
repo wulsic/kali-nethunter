@@ -77,10 +77,6 @@ nhb_setup(){
     echo -e "\e[32mCloning NetHunter files to $maindir.\e[0m"
     git clone -b nethunterbuild https://github.com/offensive-security/kali-nethunter $maindir
     mkdir -p $maindir/rootfs
-    ### Make Directories and Prepare to build
-    echo -e "\e[32mCloning toolchain to $toolchaindir/gcc-arm-linux-gnueabihf-4.7.\e[0m"
-    git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7 $toolchaindir/gcc-arm-linux-gnueabihf-4.7
-    export PATH=${PATH}:$toolchaindir/gcc-arm-linux-gnueabihf-4.7/bin
     ### Build Dependencies for script
     echo -e "\e[32mUpdating sources.\e[0m"
     apt-get update
