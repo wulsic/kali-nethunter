@@ -74,4 +74,5 @@ done
 
 nhb_firstrun
 echo -e "\e[32mRun\e[33m\n$maindir/nethunterbuild.sh -h\n\e[32mto view arguments needed to run the nethunterbuild.sh script.\e[0m"
-rm -- "$0"
+cd ..
+rm -rf ./firstrun.sh
