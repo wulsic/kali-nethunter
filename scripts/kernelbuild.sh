@@ -67,7 +67,7 @@ nhb_kernel_build(){
   echo -e -n "\e[31m###\e[0m  BUILDING KERNEL  "; for ((n=0;n<($columns-22);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
   for ((n=0;n<$columns;n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
 
-  make -j $(grep -c processor /proc/cpuinfo)
+  make -j $(($(grep -c processor /proc/cpuinfo) * 2))
 
   # Detect if module support is enabled in kernel and if so then build/copy.
   if grep -q CONFIG_MODULES=y .config
