@@ -324,7 +324,7 @@ else
 fi
 
 ### Arguments for the script
-while getopts "b:v:t:o:khcw" flag; do
+while getopts "b:v:t:o:w:khc" flag; do
   case "$flag" in
     b)
       case $OPTARG in
