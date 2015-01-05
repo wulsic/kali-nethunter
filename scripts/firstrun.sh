@@ -71,3 +71,4 @@ while getopts "o:w:" flag; do
 done
 
 nhb_firstrun
+rm -- "$0"
