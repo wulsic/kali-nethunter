@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e
+
 nhb_firstrun(){
   echo -e "\e[32mSetting variables.\e[0m"
   export date=$(date +%m%d%Y)
