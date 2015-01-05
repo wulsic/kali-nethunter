@@ -351,7 +351,7 @@ while getopts "b:v:t:o:w:khc" flag; do
     h)
       clear
       export columns=$(tput cols)
-      echo -e "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-24);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
+      echo -e "\e[31m###\e[37m NetHunter Help Menu \e[0m"; for ((n=0;n<($columns-25);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e -n "\e[31m###\e[37m e.g. ./nethunterbuilder.sh -b kernel -t grouper -a lollipop -o ~/build \e[0m"; for ((n=0;n<($columns-75);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e -n "\e[31m###\e[37m Options "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "-h               \e[31m||\e[0m This help menu"
@@ -359,20 +359,20 @@ while getopts "b:v:t:o:w:khc" flag; do
       echo -e  "-t [device]      \e[31m||\e[0m Android device to build for (Kernel buids only)"
       echo -e  "-v [Version]     \e[31m||\e[0m Android version to build for (Kernel buids only)"
       echo -e  "-o [directory]   \e[31m||\e[0m Output directory realative to present working directory"
-      echo -e  "-w [directory]   \e[31m||\e[0m Working directory realative to presentworking directory"
+      echo -e  "-w [directory]   \e[31m||\e[0m Working directory realative to present working directory"
       echo -e  "-k               \e[31m||\e[0m Keep previously downloaded files (If they exist)"
       echo -e  "-c               \e[31m||\e[0m Combine rootfs and kernel into one package ['both' or 'all' buildtypes]"
       echo -e -n "\e[31m###\e[37m Devices "; for ((n=0;n<($columns-12);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
-      echo -e  "manta            \e[31m||\e[0m Nexus 10"
-      echo -e  "grouper          \e[31m||\e[0m Nexus 7 (2012) Wifi"
-      echo -e  "tilapia          \e[31m||\e[0m Nexus 7 (2012) 3G"
-      echo -e  "flo              \e[31m||\e[0m Nexus 7 (2013) Wifi"
-      echo -e  "deb              \e[31m||\e[0m Nexus 7 (2013) LTE"
-      echo -e  "mako             \e[31m||\e[0m Nexus 4"
-      echo -e  "hammerhead       \e[31m||\e[0m Nexus 5"
-      echo -e  "shamu            \e[31m||\e[0m Nexus 6"
-      echo -e  "flounder         \e[31m||\e[0m Nexus 9 Wifi"
       echo -e  "bacon            \e[31m||\e[0m OnePlus One"
+      echo -e  "deb              \e[31m||\e[0m Nexus 7 (2013) LTE"
+      echo -e  "flo              \e[31m||\e[0m Nexus 7 (2013) Wifi"
+      echo -e  "flounder         \e[31m||\e[0m Nexus 9 Wifi"
+      echo -e  "grouper          \e[31m||\e[0m Nexus 7 (2012) Wifi"
+      echo -e  "hammerhead       \e[31m||\e[0m Nexus 5"
+      echo -e  "mako             \e[31m||\e[0m Nexus 4"
+      echo -e  "manta            \e[31m||\e[0m Nexus 10"
+      echo -e  "shamu            \e[31m||\e[0m Nexus 6"
+      echo -e  "tilapia          \e[31m||\e[0m Nexus 7 (2012) 3G"
       echo -e -n "\e[31m###\e[37m Build Types \e[0m"; for ((n=0;n<($columns-16);n++)); do echo -e -n "\e[31m#\e[0m"; done; echo
       echo -e  "all              \e[31m||\e[0m Builds rootfs and kernels for all devices"
       echo -e  "both             \e[31m||\e[0m Builds kernel and RootFS (Requires -t and -v arguments)"
