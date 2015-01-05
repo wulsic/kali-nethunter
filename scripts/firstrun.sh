@@ -73,6 +73,7 @@ while getopts "o:w:" flag; do
 done
 
 nhb_firstrun
+chmod +x ./nethunterbuild.sh
 echo -e "\e[32mRun\e[33m\n$maindir/nethunterbuild.sh -h\n\e[32mto view arguments needed to run the nethunterbuild.sh script.\e[0m"
 cd ..
 rm -rf ./firstrun.sh
