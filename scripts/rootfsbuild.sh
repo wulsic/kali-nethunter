@@ -70,7 +70,8 @@ nhb_stage2(){
   cp -rf $maindir/files/bin/hid/powersploit-payload $kalirootfs/var/www/payload
   chmod 644 $kalirootfs/var/www/payload
 
-  cp $kalirootfs/* $rootfsdir/kali-$architecture-base/*
+  mkdir -p $rootfsdir/kali-$architecture-base
+  cp $kalirootfs/* $rootfsdir/kali-$architecture-base/
 }
 
 nhb_stage3(){
