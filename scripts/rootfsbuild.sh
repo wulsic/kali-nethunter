@@ -316,8 +316,6 @@ nhb_zip(){
 
 if [[ -d $rootfsdir/kali-$architecture-base ]]; then
   mkdir -p $kalirootfs
-  LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y update
-  LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y upgrade
   cp -rf $rootfsdir/kali-$architecture-base/* $kalirootfs/
 
   nhb_stage3
