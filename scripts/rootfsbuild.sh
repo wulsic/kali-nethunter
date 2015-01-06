@@ -71,7 +71,7 @@ nhb_stage2(){
   chmod 644 $kalirootfs/var/www/payload
 
   mkdir -p $rootfsdir/kali-$architecture-base
-  cp $kalirootfs/* $rootfsdir/kali-$architecture-base/
+  cp -rf $kalirootfs/* $rootfsdir/kali-$architecture-base/
 }
 
 nhb_stage3(){
@@ -318,7 +318,7 @@ if [[ -d $rootfsdir/kali-$architecture-base ]]; then
   mkdir -p $kalirootfs
   LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y update
   LANG=C chroot $rootfsdir/kali-$architecture-base apt-get -y upgrade
-  cp $rootfsdir/kali-$architecture-base/* $kalirootfs/*
+  cp -rf $rootfsdir/kali-$architecture-base/* $kalirootfs/
 
   nhb_stage3
   nhb_stage4
