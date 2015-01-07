@@ -29,7 +29,7 @@ elif (args.de):
 	locale='de'
 elif (args.es):
 	locale='es'
-elif (args.es):
+elif (args.sv):
 	locale='sv'
 
 def read_file(filename):
