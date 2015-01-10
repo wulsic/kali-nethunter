@@ -1,6 +1,6 @@
 #!/bin/bash
 # $1 = Is an argument passed by /system/bin/bootkali (e.g. bootkali start-rev-met english)
-# $2 = Is an argument passed by /system/bin/bootkali to set the language --us | --fr | --de | --es
+# $2 = Is an argument passed by /system/bin/bootkali to set the language --us | --fr | --de | --es | --sv
 
 if [ "$1" == "hid-cmd" ]; then
 	LANG=$LANG /usr/bin/hid-all.py --wincmd $2
