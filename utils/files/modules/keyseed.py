@@ -856,10 +856,3 @@ def enterb():
 	print '''echo -ne "\\x00\\x00\\x00\\x28\\x00\\x00\\x00\\x00" > /dev/hidg0'''
 	print '''echo -ne "\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00" > /dev/hidg0'''
 	print '''sleep 2'''
-
-#Unit tests
-#def main():
-#	win7cmd_elevated("fr")
-
-#if __name__ == "__main__":
-#    main()
