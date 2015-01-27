@@ -151,8 +151,6 @@ nhb_setup(){
   echo -e "\e[32mChecking NetHunter directory for any updated files.\e[0m"
   ### Makes sure all of the files are up to date
   cd $maindir
-  git stash save
-  git stash drop
   for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $maindir/$directory && git pull && cd ..;done
   cd $maindir
   chmod +x nethunterbuild.sh
