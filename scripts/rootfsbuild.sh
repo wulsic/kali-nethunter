@@ -249,6 +249,7 @@ nhb_clean(){
 
   echo -e "\e[32mUnmounting partitions.\e[0m"
   ### Unmount partitions
+  sleep 10
   umount $kalirootfs/dev/pts
   umount $kalirootfs/dev/
   umount $kalirootfs/proc
