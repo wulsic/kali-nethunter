@@ -252,7 +252,7 @@ nhb_clean(){
   sleep 10
   umount $kalirootfs/dev/pts
   umount $kalirootfs/dev/
-  umount $kalirootfs/proc
+  umount -lf $kalirootfs/proc
 }
 
 nhb_compress(){
