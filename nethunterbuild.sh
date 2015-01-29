@@ -254,9 +254,9 @@ nhb_combine(){
   echo -e "\e[32mUnzipping kernel.\e[0m"
   unzip $workingdir/Kernel-$device-$androidversion-$date.zip -d $maindir/tmp/kernel
   echo -e "\e[32Copying rootfs files to combined directory.\e[0m"
-  rsync -av $maindir/tmp/rootfs/ $maindir/tmp/combined
+  rsync -arv $maindir/tmp/rootfs/ $maindir/tmp/combined
   echo -e "\e[32Copying kernel files to combined directory.\e[0m"
-  rsync -av $maindir/tmp/kernel/ $maindir/tmp/combined
+  rsync -arv $maindir/tmp/kernel/ $maindir/tmp/combined
   echo -e "\e[32Appending rootfs install script to kernel script.\e[0m"
   cat $maindir/tmp/rootfs/META-INF/com/google/android/updater-script >> $maindir/tmp/combined/META-INF/com/google/android/updater-script
   cd $maindir/tmp/combined
