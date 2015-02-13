@@ -95,7 +95,7 @@ nhb_kernel_build(){
     fi
     cp $workingdir/flashkernel/system/lib/modules/* $workingdir/flash/system/lib/modules
     # Kali rootfs (chroot) looks for modules in a different folder then Android (/system/lib) when using modprobe
-    rsync -HPavm --include='*.ko' -f 'hide,! */' $workingdir/kernel/modules/lib/modules $rootfsdir/kali-armhf/lib/
+    rsync -HPavm --include='*.ko' -f 'hide,! */' $workingdir/kernel/modules/lib/modules $rootfsdir/kali-armhf-base/lib/
   fi
 
   # Copy kernel to flashable package, prefer zImage-dtb. Image.gz-dtb appears to be for 64bit kernels for now
