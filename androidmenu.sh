@@ -1,6 +1,12 @@
 #!/bin/bash
 # Modified to include menu system
 # Kernel Development requires Kali 64bit host
+
+# Configure the build environment
+DEBUG=0    # Valid values are 0 or 1, with 1 being enabled
+LOCALGIT=0
+FROZENKERNEL=0
+
 ######### Dependencies #######
 # cd ~
 # git clone https://github.com/offensive-security/kali-nethunter
@@ -17,23 +23,26 @@
 #
 # - Nexus 10
 # git clone https://github.com/binkybear/kernel_samsung_manta.git -b thunderkat
-# git clone https://github.com/binkybear/####################.git -b ########## nexus10-5
+# git clone https://github.com/binkybear/nexus10-5.git -b android-exynos-manta-3.4-lollipop-release
 # - Nexus 9
-# git clone https://github.com/binkybear/####################.git -b ########## nexus9-5
+# git clone https://github.com/binkybear/flounder.git -b android-tegra-flounder-3.10-lollipop-release  nexus9-5
 # - Nexus 7 (2012)
 # git clone https://github.com/binkybear/kangaroo.git -b kangaroo
-# git clone https://github.com/binkybear/####################.git -b ########## nexus7_2012-5
+# git clone https://github.com/binkybear/android_kernel_asus_grouper.git -b android-tegra3-grouper-3.1-lollipop-release_tegra-l4t-r16-16.5 nexus7_2012-5
 # - Nexus 7 (2013)
 # git clone https://github.com/binkybear/kernel_msm.git -b android-msm-flo-3.4-kitkat-mr2 flodeb
 # git clone https://github.com/binkybear/flo.git -b ElementalX-3.00 nexus7_2013-5
 # - Nexus 6
-# git clone https://github.com/binkybear/####################.git -b ########## nexus6-5
+# git clone https://github.com/binkybear/kernel_msm.git -b android-msm-shamu-3.10-lollipop-release nexus6-5
 # - Nexus 5
 # git clone https://github.com/binkybear/furnace_kernel_lge_hammerhead.git -b android-4.4
 # git clone https://github.com/binkybear/kernel_msm.git -b android-msm-hammerhead-3.4-lollipop-release nexus5-5
 # - Nexus 4
 # git clone https://github.com/binkybear/kernel_msm.git -b android-msm-mako-3.4-kitkat-mr2 mako
-# git clone https://github.com/binkybear/####################.git -b ########## nexus4-5
+# git clone https://github.com/binkybear/kernel_msm.git -b android-msm-mako-3.4-lollipop-release nexus4-5
+# - OnePlus One
+# git clone https://github.com/binkybear/AK-OnePone.git -b cm-11.0-ak oneplus11
+# git clone https://github.com/binkybear/AK-OnePone.git -b cm-12.1 oneplus12
 # - Galaxy S5
 # git clone https://github.com/binkybear/KTSGS5.git -b aosp4.4 galaxy_s5
 # git clone https://github.com/binkybear/KTSGS5.git -b tw4.4 galaxy_s5_tw
@@ -42,8 +51,9 @@
 # git clone https://github.com/binkybear/android_kernel_samsung_exynos5410.git -b cm-11.0 galaxy_s4_i9500
 # - Toolchain
 # git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7
+# git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b lollipop-release
 ######## Local Repo ##########
-# to update :  for directory in $(ls -l |grep ^d|awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
+# to update :  for directory in $(ls -l |grep "^d" | awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
 # 0 = use remote git clone | 1 = local copies
 ######## Frozen Kernels ##########
 # Save time from having to build kernels every time set FROZENKERNEL=1.
@@ -55,14 +65,14 @@ FROZENKERNEL=0
 #########  Devices  ##########
 # Build scripts for each kernel is located under devices/devicename
 source devices/nexus10-manta
-source devices/nexus9-flounder
+source devices/nexus9-volantis #aka flounder
 source devices/nexus6-shamu
 source devices/nexus7-grouper-tilapia
 source devices/nexus7-flo-deb
 source devices/nexus5-hammerhead
 source devices/nexus4-mako
-source devices/galaxys5-G900
-source devices/galaxys4
+source devices/one-bacon
+source devices/lgg2-d802
 
 ######### Set paths and permissions  #######
 
@@ -81,11 +91,20 @@ chmod +x utils/boottools/*
 
 printf '\033[8;33;100t'
 
+d_clear(){
+  # Disable the 'clear' statements, if DEBUG mode is enabled
+  if [ ${DEBUG} == 1 ]; then
+    echo **DEBUG** : Not clearing the screen.
+  else
+    clear
+  fi
+}
+
 f_check_version(){
   # Allow user input of version number/folder creation to make set up easier
   echo "Checking for git updates in local folder..."
-  for directory in $(ls -l |grep "^d" | awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
-  clear
+  for directory in $(ls -l | grep "^d" | awk -F" " '{print $9}');do cd $directory && git pull && cd ..;done
+  d_clear
   # need to exit back to basedir to establish root folder
   cd ${basepwd}
   echo ""
@@ -124,7 +143,7 @@ esac
 }
 
 f_interface(){
-clear
+d_clear
 echo -e "		         \e[1mKALI NETHUNTER BUILDER FOR ANDROID DEVICES\e[0m"
 echo ""
 echo "	   WORK PATH: ${basedir}"
@@ -134,6 +153,8 @@ echo ""
 echo -e "\e[31m	[2] Build for Samsung Devices \e[0m"
 echo ""
 echo -e "\e[31m	[3] Build for LG Devices \e[0m"
+echo ""
+echo -e "\e[31m	[4] Build for OnePlus One Devices \e[0m"
 echo ""
 if [ -f "${basedir}/flashkernel/kernel/kernel" ] && [ -d "${basedir}/flash" ]; then
 echo "	[77] Inject finished rootfs/kernel into ROM"
@@ -150,19 +171,20 @@ read -p "Choice: " menuchoice
 
 case $menuchoice in
 
-1) clear; f_interface_nexus ;;
-2) clear; f_interface_samsung ;;
+1) d_clear; f_interface_nexus ;;
+2) d_clear; f_interface_samsung ;;
 3) clear; f_interface_lg ;;
-77) clear; f_rom_build ;;
-88) clear; f_rootfs ; f_flashzip; f_zip_save ;;
-99) f_cleanup ;;
-q) clear; exit 1 ;;
+4) d_clear; f_interface_oneplus ;;
+77) d_clear; f_rom_build; f_interface ;;
+88) d_clear; f_rootfs ; f_flashzip; f_zip_save; f_interface ;;
+99) f_cleanup; f_interface ;;
+q) d_clear; exit 1 ;;
 *) echo "Incorrect choice..." ;
 esac
 }
 
 f_interface_nexus(){
-clear
+d_clear
 echo ""
 echo -e "\e[31m ---- NEXUS 10 (2012) - MANTA --------------------------------------------------------\e[0m"
 echo "  [1] Build for Nexus 10 Kernel with wireless USB support (Android 4.4+)"
@@ -180,10 +202,10 @@ echo -e "\e[31m ---- NEXUS 5  (2013) - HAMMERHEAD ------------------------------
 echo "  [5] Build for Nexus 5 with wireless USB support (Android 4.4+)"
 echo ""
 echo -e "\e[31m ---- NEXUS 6  (2014) - SHAMU --------------------------------------------------------\e[0m"
-echo "  [#] Build for Nexus 6 with wireless USB support (Android 4.4+)"
+echo "  [6] Build for Nexus 6 with wireless USB support (Android 5)"
 echo ""
-echo -e "\e[31m ---- NEXUS 9 (2014) - FLOUNDER ------------------------------------------------------\e[0m"
-echo "  [#] Build for Nexus 9 with wireless USB support (Android 4.4+)"
+echo -e "\e[31m ---- NEXUS 9 (2014) - VOLANTIS ------------------------------------------------------\e[0m"
+echo "  [7] Build for Nexus 9 with wireless USB support (Android 5)"
 echo ""
 echo "  [0] Exit to Main Menu"
 echo ""
@@ -193,14 +215,14 @@ read -p "Choice: " nexusmenuchoice
 
 case $nexusmenuchoice in
 
-1) clear; f_manta ;;
-2) clear; f_grouper ;;
-3) clear; f_deb ;;
-4) clear; f_mako ;;
-5) clear; f_hammerhead ;;
-6) clear; f_shamu ;;
-7) clear; f_flounder ;;
-0) clear; f_interface ;;
+1) d_clear; f_manta ;;
+2) d_clear; f_grouper ;;
+3) d_clear; f_deb ;;
+4) d_clear; f_mako ;;
+5) d_clear; f_hammerhead ;;
+6) d_clear; f_shamu ;;
+7) d_clear; f_flounder ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice..." ;
 esac
 }
@@ -221,9 +243,9 @@ read -p "Choice: " samsungmenuchoice
 
 case $samsungmenuchoice in
 
-1) clear; f_galaxyS5 ;;
-2) clear; f_galaxyS4_I9500 ;;
-0) clear; f_interface ;;
+1) d_clear; f_galaxyS5 ;;
+2) d_clear; f_galaxyS4_I9500 ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice..." ;
 esac
 }
@@ -247,37 +269,38 @@ case $lgmenuchoice in
 esac
 }
 
-f_manta(){
-echo -e "\e[31m	------------------------- NEXUS 10 -----------------------\e[0m"
+f_interface_oneplus(){
+echo -e "\e[31m ------------------------- OnePlus One --------------------\e[0m"
 echo ""
-echo "	[1] Build All - Kali rootfs and Kernel (Android 4.4+)"
-echo "	[2] Build Kernel Only (Android 4.4+)"
+echo "  [1] Build All - Kali rootfs and Kernel (Android 4.4+)"
+echo "  [2] Build Kernel Only (Android 4.4+)"
 echo "  [3] Build All - Kali rootfs and Kernel (Android 5)"
 echo "  [4] Build Kernel Only (Android 5)"
-echo "	[0] Exit to Main Menu"
+echo "  [0] Exit to Main Menu"
 echo ""
 echo ""
 # wait for character input
 
-read -p "Choice: " manta_menuchoice
+read -p "Choice: " grouper_menuchoice
 
-case $manta_menuchoice in
+case $grouper_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_nexus10_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_nexus10_kernel ; f_zip_kernel_save ;;
-3) clear; f_rootfs ; f_flashzip ; f_nexus10_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-4) clear; f_nexus10_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
-*) echo "Incorrect choice..." ;
+1) d_clear; f_rootfs ; f_flashzip ; f_oneplus_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_oneplus_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_oneplus_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_oneplus_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
+*) echo "Incorrect choice... " ;
 esac
-
 }
 
-f_flounder(){
-echo -e "\e[31m ------------------------- NEXUS 9 -----------------------\e[0m"
+f_manta(){
+echo -e "\e[31m	------------------------- NEXUS 10 -----------------------\e[0m"
 echo ""
-echo "  [1] Build All - Kali rootfs and Kernel (Android 5)"
-echo "  [2] Build Kernel Only (Android 5)"
+echo "  [1] Build All - Kali rootfs and Kernel (Android 4.4+)"
+echo "  [2] Build Kernel Only (Android 4.4+)"
+echo "  [3] Build All - Kali rootfs and Kernel (Android 5)"
+echo "  [4] Build Kernel Only (Android 5)"
 echo "  [0] Exit to Main Menu"
 echo ""
 echo ""
@@ -287,9 +310,55 @@ read -p "Choice: " manta_menuchoice
 
 case $manta_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_nexus9_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_nexus9_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_nexus10_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_nexus10_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_nexus10_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_nexus10_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
+*) echo "Incorrect choice..." ;
+esac
+
+}
+
+f_flounder(){
+echo -e "\e[31m ------------------------- NEXUS 9 -----------------------\e[0m"
+echo ""
+echo "  [1] Build All - Kali rootfs and Kernel (Android 9)"
+echo "  [2] Build Kernel Only (Android 9)"
+echo "  [0] Exit to Main Menu"
+echo ""
+echo ""
+# wait for character input
+
+read -p "Choice: " manta_menuchoice
+
+case $manta_menuchoice in
+
+1) d_clear; f_rootfs ; f_flashzip ; f_nexus9_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_nexus9_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
+*) echo "Incorrect choice..." ;
+esac
+
+}
+
+f_shamu(){
+echo -e "\e[31m ------------------------- NEXUS 6 -----------------------\e[0m"
+echo ""
+echo "  [1] Build All - Kali rootfs and Kernel (Android 5)"
+echo "  [2] Build Kernel Only (Android 5)"
+echo "  [0] Exit to Main Menu"
+echo ""
+echo ""
+# wait for character input
+
+read -p "Choice: " shamu_menuchoice
+
+case $shamu_menuchoice in
+
+1) d_clear; f_rootfs ; f_flashzip ; f_nexus6_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_nexus6_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice..." ;
 esac
 
@@ -298,11 +367,11 @@ esac
 f_grouper(){
 echo -e "\e[31m	------------------------- NEXUS 7 (2012) -----------------------\e[0m"
 echo ""
-echo "	[1] Build All - Kali rootfs and Kernel (Android 4.4+)"
-echo "	[2] Build Kernel Only (Android 4.4+)"
+echo "  [1] Build All - Kali rootfs and Kernel (Android 4.4+)"
+echo "  [2] Build Kernel Only (Android 4.4+)"
 echo "  [3] Build All - Kali rootfs and Kernel (Android 5)"
 echo "  [4] Build Kernel Only (Android 5)"
-echo "	[0] Exit to Main Menu"
+echo "  [0] Exit to Main Menu"
 echo ""
 echo ""
 # wait for character input
@@ -311,11 +380,11 @@ read -p "Choice: " grouper_menuchoice
 
 case $grouper_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_nexus7_grouper_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_nexus7_grouper_kernel ; f_zip_kernel_save ;;
-3) clear; f_rootfs ; f_flashzip ; f_nexus7_grouper_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-4) clear; f_nexus7_grouper_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_nexus7_grouper_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_nexus7_grouper_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_nexus7_grouper_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_nexus7_grouper_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 
@@ -339,13 +408,13 @@ read -p "Choice: " deb_menuchoice
 
 case $deb_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_deb_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_deb_stock_kernel ; f_zip_kernel_save ;;
-3) clear; f_rootfs ; f_flashzip ; f_deb_cyanogen_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-4) clear; f_deb_cyanogen_kernel ; f_zip_kernel_save ;;
-5) clear; f_rootfs ; f_flashzip ; f_deb_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-6) clear; f_deb_stock_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_deb_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_deb_stock_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_deb_cyanogen_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_deb_cyanogen_kernel ; f_zip_kernel_save ;;
+5) d_clear; f_rootfs ; f_flashzip ; f_deb_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+6) d_clear; f_deb_stock_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 }
@@ -366,11 +435,11 @@ read -p "Choice: " deb_menuchoice
 
 case $deb_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_hammerhead_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_hammerhead_stock_kernel ; f_zip_kernel_save ;;
-3) clear; f_rootfs ; f_flashzip ; f_hammerhead_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-4) clear; f_hammerhead_stock_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_hammerhead_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_hammerhead_stock_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_hammerhead_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_hammerhead_stock_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 }
@@ -387,15 +456,15 @@ echo ""
 echo ""
 # wait for character input
 
-read -p "Choice: " deb_menuchoice
+read -p "Choice: " mako_menuchoice
 
-case $deb_menuchoice in
+case $mako_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_mako_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_mako_stock_kernel ; f_zip_kernel_save ;;
-3) clear; f_rootfs ; f_flashzip ; f_mako_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-4) clear; f_mako_stock_kernel5 ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_mako_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_mako_stock_kernel ; f_zip_kernel_save ;;
+3) d_clear; f_rootfs ; f_flashzip ; f_mako_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) d_clear; f_mako_stock_kernel5 ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 }
@@ -412,15 +481,15 @@ echo ""
 echo ""
 # wait for character input
 
-read -p "Choice: " deb_menuchoice
+read -p "Choice: " s5_menuchoice
 
-case $deb_menuchoice in
+case $s5_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_s5_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_rootfs ; f_flashzip ; f_s5_tw_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-3) clear; f_s5_kernel ; f_zip_kernel_save ;;
-4) clear; f_s5_tw_kernel ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_s5_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_rootfs ; f_flashzip ; f_s5_tw_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+3) d_clear; f_s5_kernel ; f_zip_kernel_save ;;
+4) d_clear; f_s5_tw_kernel ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 }
@@ -437,15 +506,15 @@ echo ""
 echo ""
 # wait for character input
 
-read -p "Choice: " deb_menuchoice
+read -p "Choice: " s4_menuchoice
 
-case $deb_menuchoice in
+case $s4_menuchoice in
 
-1) clear; f_rootfs ; f_flashzip ; f_s4_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-2) clear; f_rootfs ; f_flashzip ; f_s4_i9500_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
-3) clear; f_s4_kernel ; f_zip_kernel_save ;;
-4) clear; f_s4_i9500_kernel ; f_zip_kernel_save ;;
-0) clear; f_interface ;;
+1) d_clear; f_rootfs ; f_flashzip ; f_s4_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) d_clear; f_rootfs ; f_flashzip ; f_s4_i9500_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+3) d_clear; f_s4_kernel ; f_zip_kernel_save ;;
+4) d_clear; f_s4_i9500_kernel ; f_zip_kernel_save ;;
+0) d_clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
 }
@@ -501,14 +570,14 @@ f_rootfs(){
 
 # Conduct check to see if previous rootfs was built
 
-if [ -d "${rootfs}/kali-armhf" ]; then
-  clear
+if [ -d "${rootfs}/kali-$architecture" ]; then
+  d_clear
   echo "Detected prebuilt rootfs."
   echo ""
   read -p "Would you like to create a new rootfs? (y/n): " -e -i "n" createrootfs
     if [ "$createrootfs" == "y" ]; then
       echo "Removing previous rootfs"
-      rm -rf ${rootfs}/kali-armhf
+      rm -rf ${rootfs}/kali-$architecture
       f_rootfs_build
     else
       echo "Continue with current build"
@@ -536,17 +605,18 @@ cd ${rootfs}
 # Package installations for various sections.
 
 arm="abootimg cgpt fake-hwclock ntpdate vboot-utils vboot-kernel-utils uboot-mkimage"
-base="kali-menu kali-defaults initramfs-tools usbutils openjdk-7-jre mlocate"
+base="kali-menu kali-defaults initramfs-tools usbutils openjdk-7-jre mlocate google-nexus-tools"
 desktop="kali-defaults kali-root-login desktop-base xfce4 xfce4-places-plugin xfce4-goodies"
-tools="nmap metasploit tcpdump tshark wireshark burpsuite armitage sqlmap recon-ng wipe socat ettercap-text-only beef-xss set device-pharmer"
+tools="nmap metasploit tcpdump tshark wireshark burpsuite armitage sqlmap recon-ng wipe socat ettercap-text-only beef-xss set device-pharmer nishang"
 wireless="wifite iw aircrack-ng gpsd kismet kismet-plugins giskismet dnsmasq dsniff sslstrip mdk3 mitmproxy"
 services="autossh openssh-server tightvncserver apache2 postgresql openvpn php5"
-extras="wpasupplicant zip macchanger dbd florence libffi-dev python-setuptools python-pip hostapd ptunnel tcptrace dnsutils p0f"
+extras="wpasupplicant zip macchanger dbd florence libffi-dev python-setuptools python-pip hostapd ptunnel tcptrace dnsutils p0f mitmf"
 mana="python-twisted python-dnspython libnl1 libnl-dev libssl-dev sslsplit python-pcapy tinyproxy isc-dhcp-server rfkill mana-toolkit"
+bdf="backdoor-factory bdfproxy"
 spiderfoot="python-lxml python-m2crypto python-netaddr python-mako"
 sdr="sox librtlsdr"
 
-export packages="${arm} ${base} ${desktop} ${tools} ${wireless} ${services} ${extras} ${mana} ${spiderfoot} ${sdr}"
+export packages="${arm} ${base} ${desktop} ${tools} ${wireless} ${services} ${extras} ${mana} ${spiderfoot} ${sdr} ${bdf}"
 export architecture="armhf"
 
 # create the rootfs - not much to modify here, except maybe the hostname.
@@ -604,6 +674,11 @@ cp -rf ${basepwd}/utils/{s,start-*} kali-$architecture/usr/bin/
 cp -rf ${basepwd}/utils/hid/* kali-$architecture/usr/bin/
 cp -rf ${basepwd}/utils/msf/*.sh kali-$architecture/usr/bin/
 
+
+# Copy all start/stop scripts to xbin
+cp ${basepwd}/flash/system/xbin/* ${rootfs}/kali-$architecture/usr/bin/
+
+
 cat << EOF > kali-$architecture/etc/network/interfaces
 auto lo
 iface lo inet loopback
@@ -633,6 +708,8 @@ console-common console-data/keymap/policy select Select keymap from full list
 console-common console-data/keymap/full select en-latin1-nodeadkeys
 EOF
 
+cp ${basepwd}/utils/safe-apt-get kali-$architecture/usr/bin/safe-apt-get
+
 cat << EOF > kali-$architecture/third-stage
 #!/bin/bash
 dpkg-divert --add --local --divert /usr/sbin/invoke-rc.d.chroot --rename /usr/sbin/invoke-rc.d
@@ -640,18 +717,18 @@ cp /bin/true /usr/sbin/invoke-rc.d
 echo -e "#!/bin/sh\nexit 101" > /usr/sbin/policy-rc.d
 chmod +x /usr/sbin/policy-rc.d
 
-apt-get update
-apt-get install locales-all
+safe-apt-get update
+safe-apt-get install locales-all
 
 debconf-set-selections /debconf.set
 rm -f /debconf.set
-apt-get update
-apt-get -y install git-core binutils ca-certificates initramfs-tools uboot-mkimage
-apt-get -y install locales console-common less nano git
+safe-apt-get update
+safe-apt-get -y install git-core binutils ca-certificates initramfs-tools uboot-mkimage
+safe-apt-get -y install locales console-common less nano git
 echo "root:toor" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
-apt-get --yes --force-yes install $packages
+safe-apt-get --yes --force-yes install $packages
 
 rm -f /usr/sbin/policy-rc.d
 rm -f /usr/sbin/invoke-rc.d
@@ -671,28 +748,20 @@ sed -i 's/gpshost=localhost:2947/gpshost=127.0.0.1:2947/g' ${rootfs}/kali-$archi
 
 # Copy over our kali specific mana config files
 cp -rf ${basepwd}/utils/manna/start-mana* ${rootfs}/kali-$architecture/usr/bin/
-cp -rf ${basepwd}/utils/manna/stop-mana ${rootfs}/kali-$architecture/usr/bin/
+cp -rf ${basepwd}/utils/manna/stop-mana* ${rootfs}/kali-$architecture/usr/bin/
 cp -rf ${basepwd}/utils/manna/*.sh ${rootfs}/kali-$architecture/usr/share/mana-toolkit/run-mana/
 dos2unix ${rootfs}/kali-$architecture/usr/share/mana-toolkit/run-mana/*
 dos2unix ${rootfs}/kali-$architecture/etc/mana-toolkit/*
 chmod 755 ${rootfs}/kali-$architecture/usr/share/mana-toolkit/run-mana/*
 chmod 755 ${rootfs}/kali-$architecture/usr/bin/*.sh
 
+# Set up HID powersploit hosted payload
+cp -rf ${basepwd}/utils/files/powersploit-payload kali-$architecture/var/www/payload
+chmod 644 kali-$architecture/var/www/payload
+
 # Install Rawr (https://bitbucket.org/al14s/rawr/wiki/Usage)
 git clone https://bitbucket.org/al14s/rawr.git ${rootfs}/kali-$architecture/opt/rawr
 chmod 755 ${rootfs}/kali-$architecture/opt/rawr/install.sh
-
-# Install MITMf
-LANG=C chroot ${rootfs}/kali-$architecture pip install capstone
-git clone https://github.com/byt3bl33d3r/MITMf.git ${rootfs}/kali-$architecture/opt/MITMf
-cat << EOF > ${rootfs}/kali-$architecture/tmp/mitmf.sh
-cd /opt/MITMf
-chmod +x setup.sh update.sh
-./setup.sh
-EOF
-chmod +x ${rootfs}/kali-$architecture/tmp/mitmf.sh
-LANG=C chroot ${rootfs}/kali-$architecture /tmp/mitmf.sh
-rm -f ${rootfs}/kali-$architecture/tmp/mitmf.sh
 
 # Install Dictionary for wifite
 mkdir -p ${rootfs}/kali-$architecture/opt/dic
@@ -717,24 +786,12 @@ sed -i 's/hs/\/captures/g' ${rootfs}/kali-$architecture/etc/kismet/kismet.conf
 cp -rf ${basepwd}/menu/kalimenu ${rootfs}/kali-$architecture/usr/bin/kalimenu
 sleep 5
 
-#Installs ADB and fastboot compiled for ARM
-git clone git://git.kali.org/packages/google-nexus-tools
-cp ./google-nexus-tools/bin/linux-arm-adb ${rootfs}/kali-$architecture/usr/bin/adb
-cp ./google-nexus-tools/bin/linux-arm-fastboot ${rootfs}/kali-$architecture/usr/bin/fastboot
-rm -rf ./google-nexus-tools
-LANG=C chroot kali-$architecture chmod 755 /usr/bin/fastboot
-LANG=C chroot kali-$architecture chmod 755 /usr/bin/adb
-
 #Installs deADBolt
-curl -o deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
-cp ./deadbolt ${rootfs}/kali-$architecture/usr/bin/deadbolt
-rm -rf deadbolt
+curl -o ${rootfs}/kali-$architecture/usr/bin/deadbolt https://raw.githubusercontent.com/photonicgeek/deADBolt/master/main.sh
 LANG=C chroot kali-$architecture chmod 755 /usr/bin/deadbolt
 
 #Installs APFucker.py
-curl -o apfucker.py https://raw.githubusercontent.com/mattoufoutu/scripts/master/AP-Fucker.py
-cp ./apfucker.py ${rootfs}/kali-$architecture/usr/bin/apfucker.py
-rm -rf deadbolt
+curl -o ${rootfs}/kali-$architecture/usr/bin/apfucker.py https://raw.githubusercontent.com/mattoufoutu/scripts/master/AP-Fucker.py
 LANG=C chroot kali-$architecture chmod 755 /usr/bin/apfucker.py
 
 #Install HID attack script and dictionaries
@@ -748,8 +805,9 @@ LANG=C chroot kali-$architecture chmod 755 /usr/bin/hid-dic
 # Set permissions to executable on newly added scripts
 LANG=C chroot kali-$architecture chmod 755 /usr/bin/kalimenu
 
-# Sets the default for hostapd.conf but not really needed as evilap will create it's own now
-#sed -i 's#^DAEMON_CONF=.*#DAEMON_CONF=/etc/hostapd/hostapd.conf#' kali-$architecture/etc/init.d/hostapd
+# Sets the default for hostapd.conf to the mana karma version
+sed -i 's#^DAEMON_CONF=.*#DAEMON_CONF=/etc/mana-toolkit/hostapd-karma.conf#' kali-$architecture/etc/init.d/hostapd
+sed -i 's/wlan0/wlan1/g' kali-$architecture/etc/mana-toolkit/hostapd-karma.conf
 
 # DNSMASQ Configuration options for optional access point
 cat <<EOF > kali-$architecture/etc/dnsmasq.conf
@@ -775,28 +833,30 @@ mkdir -p $cap/evilap $cap/ettercap $cap/kismet/db $cap/nmap $cap/sslstrip $cap/t
 echo "inet:x:3004:postgres,root,beef-xss,daemon,nginx" >> kali-$architecture/etc/group
 echo "nobody:x:3004:nobody" >> kali-$architecture/etc/group
 
-# CLEANUP STAGE
+if [ ${DEBUG} == 0 ]; then
+  # CLEANUP STAGE
 
-cat << EOF > kali-$architecture/cleanup
-#!/bin/bash
-rm -rf /root/.bash_history
-apt-get update
-apt-get clean
-rm -f /0
-rm -f /hs_err*
-rm -f cleanup
-rm -f /usr/bin/qemu*
+  cat << EOF > kali-$architecture/cleanup
+  #!/bin/bash
+  rm -rf /root/.bash_history
+  apt-get update
+  apt-get clean
+  rm -f /0
+  rm -f /hs_err*
+  rm -f cleanup
+  rm -f /usr/bin/qemu*
 EOF
 
-chmod +x kali-$architecture/cleanup
-LANG=C chroot kali-$architecture /cleanup
+  chmod +x kali-$architecture/cleanup
+  LANG=C chroot kali-$architecture /cleanup
 
-umount ${rootfs}/kali-$architecture/proc/sys/fs/binfmt_misc
-umount ${rootfs}/kali-$architecture/dev/pts
-umount ${rootfs}/kali-$architecture/dev/
-umount ${rootfs}/kali-$architecture/proc
+  umount ${rootfs}/kali-$architecture/proc/sys/fs/binfmt_misc
+  umount ${rootfs}/kali-$architecture/dev/pts
+  umount ${rootfs}/kali-$architecture/dev/
+  umount ${rootfs}/kali-$architecture/proc
 
-sleep 5
+  sleep 5
+fi
 }
 
 f_flashzip(){
@@ -808,7 +868,7 @@ f_flashzip(){
 #  /busybox/busybox - for mounting data folders for kernel install
 #  /data/app/kalilauncher.apk - Launches into root or menu
 #  /data/local/kalifs.tar.bz2 - The filesystem
-#  /data/local/tmp_kali - shell scripts to unzip filesystem/boot chroot
+#  /data/local/tmp_kali - shell scripts to unzip filesystem/boot chroot + config files
 #  /kernel/kernel - kernel (zImage or zImage-dtb)
 #  /META-INF/com/google/android/updater-binary - Binary file for edify script
 #  /META-INF/com/google/android/updater-script - Edify script to install Kali
@@ -821,18 +881,26 @@ f_flashzip(){
 
 # Create base flashable zip
 
-cp -rf ${basepwd}/flash ${basedir}/flash
+cp -rf ${basepwd}/flash ${basedir}/
 mkdir -p ${basedir}/flash/data/local/
 mkdir -p ${basedir}/flash/system/lib/modules
 
-# Add Webinterface
+# Copy configuration files needed by nethunter app (we could also move this folder to flash/sdcard/files)
 
-cp -rf ${basepwd}/utils/config/htdocs.tar.gz ${basedir}/flash/data/tmp_kali
-cp -rf ${basepwd}/utils/files ${basedir}/flash/data/tmp_kali/
+mkdir -p ${basedir}/flash/sdcard/files/modules
+cp -rf ${basepwd}/utils/files ${basedir}/flash/sdcard
 
-# Add Android applications that are useful to our chroot enviornment
+# Get latest Rubber Ducky conversion script
+echo "Downloading latest Ducky conversion script"
+mkdir -p  ${basedir}/flash/sdcard/files/modules
+wget https://raw.githubusercontent.com/offensive-security/kali-nethunter/master/utils/files/modules/duckconvert.txt -O ${basedir}/flash/sdcard/files/modules/duckconvert.txt
+wget https://raw.githubusercontent.com/byt3bl33d3r/duckhunter/master/duckhunter.py -O ${basedir}/flash/sdcard/files/modules/duckhunter.py
+
+# Download/add Android applications that are useful to our chroot enviornment
+
 # Required: Terminal application is required
 wget -P ${basedir}/flash/data/app/ http://jackpal.github.com/Android-Terminal-Emulator/downloads/Term.apk
+
 # Suggested: BlueNMEA to enable GPS logging in Kismet
 wget -P ${basedir}/flash/data/app/ http://max.kellermann.name/download/blue-nmea/BlueNMEA-2.1.3.apk
 # Suggested: Hackers Keyboard for easier typing in the terminal
@@ -840,7 +908,7 @@ wget -P ${basedir}/flash/data/app/ https://hackerskeyboard.googlecode.com/files/
 # Suggested: Android VNC Viewer
 wget -P ${basedir}/flash/data/app/ https://android-vnc-viewer.googlecode.com/files/androidVNC_build20110327.apk
 # Suggested: DriveDroid for CDROM emulation
-wget -P ${basedir}/flash/data/app/ http://softwarebakery.com/apps/drivedroid/files/drivedroid-free-0.9.17.apk
+wget -P ${basedir}/flash/data/app/ http://softwarebakery.com/apps/drivedroid/files/drivedroid-free-0.9.20.apk
 # Keyboard HID app
 wget -P ${basedir}/flash/data/app/ https://github.com/pelya/android-keyboard-gadget/raw/master/USB-Keyboard.apk
 # Suggested: RFAnalyzer
@@ -852,7 +920,7 @@ wget -P ${basedir}/flash/data/app/ https://github.com/demantz/RFAnalyzer/raw/mas
 #####################################################
 f_zip_save(){
 apt-get install -y zip
-clear
+d_clear
 # Compress filesystem and add to our flashable zip
 cd ${rootfs}
 
@@ -860,8 +928,8 @@ cd ${rootfs}
 #######################################
 rm -rf  kali-$architecture/dev/*
 #######################################
-
-tar jcvf kalifs.tar.bz2 kali-$architecture
+echo "Compressing kali rootfs, please wait"
+tar jcf kalifs.tar.bz2 kali-$architecture
 mv kalifs.tar.bz2 ${basedir}/flash/data/local/
 
 #tar jcvf ${basedir}/flash/data/local/kalifs.tar.bz2 ${basedir}/kali-$architecture
@@ -882,7 +950,7 @@ sleep 5
 
 f_zip_kernel_save(){
 apt-get install -y zip
-clear
+d_clear
 cd ${basedir}/flashkernel/
 zip -r6 kernel-kali-$VERSION.zip *
 mv kernel-kali-$VERSION.zip ${basedir}
@@ -896,25 +964,27 @@ sleep 5
 }
 
 f_cleanup(){
-# Clean up all the temporary build stuff and remove the directories.
-# Comment this out to keep things around if you want to see what may have gone
-# wrong.
-echo "Unmounting any previous mounted folders"
-sleep 3
-clear
-#umount ${rootfs}/kali-$architecture/proc/sys/fs/binfmt_misc
-#umount ${rootfs}/kali-$architecture/dev/pts
-#umount ${rootfs}/kali-$architecture/dev/
-#umount ${rootfs}/kali-$architecture/proc
-#echo "Removing temporary build files"
-#rm -rf ${basedir}/patches ${basedir}/kernel ${basedir}/flash ${basedir}/kali-$architecture ${basedir}/flashkernel
+  if [ ${DEBUG} == 0 ]; then
+    # Clean up all the temporary build stuff and remove the directories.
+    # This only runs if debug mode is disabled.
+
+    echo "Unmounting any previous mounted folders"
+    sleep 3
+    d_clear
+    umount ${rootfs}/kali-$architecture/proc/sys/fs/binfmt_misc
+    umount ${rootfs}/kali-$architecture/dev/pts
+    umount ${rootfs}/kali-$architecture/dev/
+    umount ${rootfs}/kali-$architecture/proc
+    echo "Removing temporary build files"
+    rm -rf ${basedir}/patches ${basedir}/kernel ${basedir}/flash ${basedir}/kali-$architecture ${basedir}/flashkernel
+  fi
 }
 
 ##############################################################
 # Attempt to build rom from an existing zip file in ROM folder
 ##############################################################
 f_rom_build(){
-clear
+d_clear
 
 cd ${basepwd}
 
@@ -1047,26 +1117,7 @@ f_interface
 # Setup of the Kernel folder can be resued on multiple kernels
 ##############################################################
 f_kernel_build_init(){
-clear
-# FOLDER CHECKING
-#
-#if [ -d "${basedir}/kernel" ]; then
-#  read -p "Kernel folder already exsists, would you like to remove folder and startover? (y/n)" kernelanswer
-#  if [ "$kernelanswer" == "y" ]; then
-#     rm -rf ${basedir}/kernel
-#  fi
-#fi
-
-#if [ -d "${basedir}/flashkernel" ]; then
-#  read -p "Kernel folder already exsists, would you like to remove previous folder? (y/n)" flashanswer
-#  if [ "$flashanswer" == "y" ]; then
-#     rm -rf ${basedir}/flashkernel
-#  fi
-#fi
-
-#if [ -d "${basedir}/toolchain" ]; then
-#  read -p "Toolchain folder already exsists, would you like to redownload? (y/n)" toolchain answer
-#fi
+d_clear
 
 cp -rf ${basepwd}/flash/ ${basedir}/flashkernel
 mkdir -p ${basedir}/flashkernel/system/lib/modules
@@ -1075,21 +1126,6 @@ rm -rf ${basedir}/flashkernel/sdcard
 rm -rf ${basedir}/flashkernel/system/app
 #rm -rf ${basedir}/flashkernel/system/bin ${basedir}/flashkernel/system/xbin
 rm -rf ${basedir}/flashkernel/META-INF/com/google/android/updater-script
-
-echo "Downloading Android Toolchian"
-if [ $LOCALGIT == 1 ]; then
-	echo "Copying toolchain to rootfs"
-        cp -rf ${basepwd}/arm-eabi-4.7 ${basedir}/toolchain
-else
-	git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 ${basedir}/toolchain
- #git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8 ${basedir}/toolchain
-fi
-
-echo "Setting export paths"
-# Set path for Kernel building
-export ARCH=arm
-export SUBARCH=arm
-export CROSS_COMPILE=${basedir}/toolchain/bin/arm-eabi-
 }
 
 ##############################################################
@@ -1098,33 +1134,46 @@ export CROSS_COMPILE=${basedir}/toolchain/bin/arm-eabi-
 f_kernel_build(){
 echo "Building Kernel"
 make -j $(grep -c processor /proc/cpuinfo)
-echo "Building modules"
-mkdir -p modules
-make modules_install INSTALL_MOD_PATH=${basedir}/kernel/modules
-echo "Copying Kernel and modules to flashable kernel folder"
-find modules -name "*.ko" -exec cp -t ../flashkernel/system/lib/modules {} +
+
+# Detect if module support is enabled in kernel and if so then build/copy.
+if grep -q CONFIG_MODULES=y .config
+  then
+    echo "Building modules"
+    mkdir -p modules
+    make modules_install INSTALL_MOD_PATH=${basedir}/kernel/modules
+    echo "Copying Kernel and modules to flashable kernel folder"
+    find modules -name "*.ko" -exec cp -t ../flashkernel/system/lib/modules {} +
+  else
+    echo "Module support is disabled."
+fi
 
 # If this is not just a kernel build by itself it will copy modules and kernel to main flash (rootfs+kernel)
 if [ -d "${basedir}/flash/" ]; then
   echo "Detected exsisting /flash folder, copying kernel and modules"
-  if [ -f "${basedir}/kernel/arch/arm/boot/zImage-dtb" ]; then
+    if [ -f "${basedir}/kernel/arch/arm/boot/zImage-dtb" ]; then
       cp ${basedir}/kernel/arch/arm/boot/zImage-dtb ${basedir}/flash/kernel/kernel
       echo "zImage-dtb found at ${basedir}/kernel/arch/arm/boot/zImage-dtb"
-  else
-    if [ -f "${basedir}/kernel/arch/arm/boot/zImage" ]; then
+    elif [ -f "${basedir}/kernel/arch/arm64/boot/Image.gz-dtb" ]; then
+      cp ${basedir}/kernel/arch/arm64/boot/Image.gz-dtb ${basedir}/flash/kernel/kernel
+      echo "Image.gz-dtb found at ${basedir}/kernel/arch/arm64/boot/Image.gz-dtb"    
+    else
+      if [ -f "${basedir}/kernel/arch/arm/boot/zImage" ]; then
         cp ${basedir}/kernel/arch/arm/boot/zImage ${basedir}/flash/kernel/kernel
         echo "zImage found at ${basedir}/kernel/arch/arm/boot/zImage"
+      fi
     fi
-  fi
   cp ${basedir}/flashkernel/system/lib/modules/* ${basedir}/flash/system/lib/modules
   # Kali rootfs (chroot) looks for modules in a different folder then Android (/system/lib) when using modprobe
   rsync -HPavm --include='*.ko' -f 'hide,! */' ${basedir}/kernel/modules/lib/modules ${rootfs}/kali-armhf/lib/
 fi
 
-# Copy kernel to flashable package, prefer zImage-dtb
+# Copy kernel to flashable package, prefer zImage-dtb. Image.gz-dtb appears to be for 64bit kernels for now
 if [ -f "${basedir}/kernel/arch/arm/boot/zImage-dtb" ]; then
   cp ${basedir}/kernel/arch/arm/boot/zImage-dtb ${basedir}/flashkernel/kernel/kernel
   echo "zImage-dtb found at ${basedir}/kernel/arch/arm/boot/zImage-dtb"
+elif [ -f "${basedir}/kernel/arch/arm64/boot/Image.gz-dtb" ]; then
+  cp ${basedir}/kernel/arch/arm64/boot/Image.gz-dtb ${basedir}/flashkernel/kernel/kernel
+  echo "Image.gz-dtb found at ${basedir}/kernel/arch/arm64/boot/Image.gz-dtb"    
 else
   if [ -f "${basedir}/kernel/arch/arm/boot/zImage" ]; then
     cp ${basedir}/kernel/arch/arm/boot/zImage ${basedir}/flashkernel/kernel/kernel
@@ -1165,7 +1214,7 @@ case $1 in
     exportdir=${exportdir%/}
     nightlytype=rootfs
     f_check_version_noui
-    clear
+    d_clear
     ccc=1
     f_rootfs_noui
     f_flashzip
@@ -1337,11 +1386,11 @@ case $1 in
         rm -rf ${basedir}
         exit;;
       *)
-        clear
+        d_clear
         echo "Please specify a device. use 'androidmenu.sh help' for avaliable options."
     esac;;
   help)
-    clear
+    d_clear
     echo "Usage:"
     echo "androidmenu.sh [Build Type] [Device] [Directory]"
     echo ""
@@ -1362,7 +1411,7 @@ case $1 in
     echo "Where the generated files will be put. Default is ~/NetHunter"
 
     exit;;
-  *) clear;;
+  *) d_clear;;
 esac
 
 f_check_version
