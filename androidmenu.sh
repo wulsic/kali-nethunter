@@ -49,7 +49,7 @@
 # Save time from having to build kernels every time set FROZENKERNEL=1.
 # This will use premade kernels in devices/frozen_kernels/{VERSION}/{BUILDNAME}
 
-LOCALGIT=0
+LOCALGIT=1
 FROZENKERNEL=0
 
 #########  Devices  ##########
@@ -133,6 +133,8 @@ echo -e "\e[31m	[1] Build for Nexus Devices \e[0m"
 echo ""
 echo -e "\e[31m	[2] Build for Samsung Devices \e[0m"
 echo ""
+echo -e "\e[31m	[3] Build for LG Devices \e[0m"
+echo ""
 if [ -f "${basedir}/flashkernel/kernel/kernel" ] && [ -d "${basedir}/flash" ]; then
 echo "	[77] Inject finished rootfs/kernel into ROM"
 fi
@@ -150,6 +152,7 @@ case $menuchoice in
 
 1) clear; f_interface_nexus ;;
 2) clear; f_interface_samsung ;;
+3) clear; f_interface_lg ;;
 77) clear; f_rom_build ;;
 88) clear; f_rootfs ; f_flashzip; f_zip_save ;;
 99) f_cleanup ;;
@@ -220,6 +223,25 @@ case $samsungmenuchoice in
 
 1) clear; f_galaxyS5 ;;
 2) clear; f_galaxyS4_I9500 ;;
+0) clear; f_interface ;;
+*) echo "Incorrect choice..." ;
+esac
+}
+
+f_interface_lg(){
+echo ""
+echo -e "\e[31m ---- LG G2 - D802 ---------------------------------------\e[0m"
+echo "  [1] Build for LG G2 D802 with wireless USB support (Android 4.4+)"
+echo ""
+echo "  [0] Exit to Main Menu"
+echo ""
+echo ""
+
+read -p "Choice: " lgmenuchoice
+
+case $lgmenuchoice in
+
+1) clear; f_g2_d802 ;;
 0) clear; f_interface ;;
 *) echo "Incorrect choice..." ;
 esac
@@ -423,6 +445,31 @@ case $deb_menuchoice in
 2) clear; f_rootfs ; f_flashzip ; f_s4_i9500_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
 3) clear; f_s4_kernel ; f_zip_kernel_save ;;
 4) clear; f_s4_i9500_kernel ; f_zip_kernel_save ;;
+0) clear; f_interface ;;
+*) echo "Incorrect choice... " ;
+esac
+}
+
+f_g2_d802(){
+echo -e "\e[31m --------------     LG G2 ----------D802    ---------\e[0m"
+echo ""
+echo "  [1] Build All - Kali rootfs and Kernel (AOSP/STOCK) (Android 4.4+)"
+echo "  [2] Build Kernel (AOSP/STOCK) Only"
+echo "  [3] Build All - Kali rootfs and Kernel (AOSP/STOCK) (Android 5)"
+echo "  [4] Build Kernel (AOSP/STOCK) (Android 5) Only"
+echo "  [0] Exit to Main Menu"
+echo ""
+echo ""
+# wait for character input
+
+read -p "Choice: " deb_menuchoice
+
+case $deb_menuchoice in
+
+1) clear; f_rootfs ; f_flashzip ; f_g2_d802_stock_kernel ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+2) clear; f_g2_d802_stock_kernel ; f_zip_kernel_save ;;
+3) clear; f_rootfs ; f_flashzip ; f_g2_d802_stock_kernel5 ; f_zip_save ; f_zip_kernel_save ; f_rom_build ;;
+4) clear; f_g2_d802_stock_kernel5 ; f_zip_kernel_save ;;
 0) clear; f_interface ;;
 *) echo "Incorrect choice... " ;
 esac
@@ -1270,6 +1317,25 @@ case $1 in
         mv kernel-kali-$VERSION.sha1sum $exportdir/Kernels/SGS4-G900/Kernel-$device-$VERSION.sha1sum
         rm -rf ${basedir}
         exit;;
+
+      lgg2)
+        if [ $3 == "" ]; then
+          exportdir="~/NetHunter"
+        else
+          exportdir="$3"
+        fi
+        exportdir=${exportdir%/}
+        nightlytype=kernel
+        device=LGG2-D802
+        f_check_version_noui
+        f_s4_kernel
+        f_zip_kernel_save
+        cd ${basedir}
+        mkdir -p $exportdir/Kernels/LGG2-D802
+        mv kernel-kali-$VERSION.zip $exportdir/Kernels/LGG2-D802/Kernel-$device-$VERSION.zip
+        mv kernel-kali-$VERSION.sha1sum $exportdir/Kernels/LGG2-D802/Kernel-$device-$VERSION.sha1sum
+        rm -rf ${basedir}
+        exit;;
       *)
         clear
         echo "Please specify a device. use 'androidmenu.sh help' for avaliable options."
@@ -1290,6 +1356,7 @@ case $1 in
     echo "   [manta] ------------Manta (Nexus 10)"
     echo "   [sgs5] -------------Samsung Galaxy S5 (G900)"
     echo "   [sgs4] -------------Samsung Galaxy S4 (I9500)"
+    echo "   [lgg2] -------------LG G2 (D802)"
     echo ""
     echo "Directory:"
     echo "Where the generated files will be put. Default is ~/NetHunter"
