@@ -173,7 +173,7 @@ case $menuchoice in
 
 1) d_clear; f_interface_nexus ;;
 2) d_clear; f_interface_samsung ;;
-3) clear; f_interface_lg ;;
+3) d_clear; f_interface_lg ;;
 4) d_clear; f_interface_oneplus ;;
 77) d_clear; f_rom_build; f_interface ;;
 88) d_clear; f_rootfs ; f_flashzip; f_zip_save; f_interface ;;
